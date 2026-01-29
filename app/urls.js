@@ -87,7 +87,6 @@ export const urlsunion = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/union-deck00002.png?alt=media&token=4ef00325-82a4-4a84-bfc2-264f94623756',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/union-deck00003.png?alt=media&token=4b78a871-ec08-48ff-8da7-b0a357580c17',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/union-deck00006.png?alt=media&token=92f94873-0631-4024-b815-8a2438d2fbb3',
-    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/union-deck00005.png?alt=media&token=094cf4c7-851f-47af-9aa7-dee789415d1a',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/union-deck00001.png?alt=media&token=1426ebfe-e909-4106-ae6d-3756b47286f5'
 ]
 
