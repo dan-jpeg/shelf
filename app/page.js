@@ -75,8 +75,8 @@ export default function Home() {
                     <ImageRow urls={urlsrow3} height={200} margins={['','mx-2']} descriptions={['archive view | home/splash page','archive grid', 'home page image cycle']}/>
                 </div>
                 <div className="mb-6">
-                    <p className="mb-2"> [] project a e-commerce design descriptions={['product display page','product display page', 'menu / navigation']}</p>
-                    <ImageRow urls={urlsprojecta} height={200}/>
+                    <p className="mb-2"> [] project a e-commerce design </p>
+                    <ImageRow urls={urlsprojecta} height={200} descriptions={['product display page','product display page', 'menu / navigation']} />
 
 
                 </div>
