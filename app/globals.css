@@ -12,7 +12,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
 
 body {
   background: var(--background);
@@ -27,4 +35,8 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+body {
+  overflow-x: hidden;
 }

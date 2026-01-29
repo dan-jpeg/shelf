@@ -19,7 +19,7 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
 
   return (
     <>
-      <div className={`flex flex-row items-center gap-2 overflow-x-auto lg:flex-wrap ${className} `}>
+      <div className={`flex flex-row  scrollbar-hide items-center gap-2 overflow-x-auto lg:flex-wrap ${className} `}>
         {urls.map((url, index) => {
           const marginClass = margins[index] || '';
           return isVideo(url) ? (

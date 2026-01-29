@@ -81,7 +81,7 @@ export default function Home() {
 
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-6 scrollbar-hide " >
                     <p className="mb-2"> [] jing yi additional</p>
                     <ImageRow urls={urlsjinniphone} height={240} margins={['-mx-8 -my-1']}/>
                 </div>

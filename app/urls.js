@@ -68,7 +68,8 @@ export const urlsedie = [
 export const urlslapres = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/lapres-3.png?alt=media&token=73c364e9-6ae8-4e32-94bc-2924734a468d',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/lapres-2.png?alt=media&token=3bbbe66b-34f6-404f-939d-0899643c7c44',
-    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/lavant-design-explortation.mov?alt=media&token=ed497472-3609-48c7-9105-27efc03b9903'
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/lavant-design-explortation.mov?alt=media&token=ed497472-3609-48c7-9105-27efc03b9903',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/lapres-animation.MOV?alt=media&token=c9141cfc-5f24-4aeb-8bf6-3695e1525012'
 ]
 
 export const urlsgrandcordprint = [
