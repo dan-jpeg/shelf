@@ -14,7 +14,8 @@ export const grandcordurls1 = [
 export const grandcordurls2 = [
 
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/pdp-minimal.mov?alt=media&token=1b552662-8548-46a2-9d7e-241e08d36b5b',
-    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/pdp-sketch.png?alt=media&token=82f3b0d9-d061-44da-85ee-746828a5def0'
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/pdp-sketch.png?alt=media&token=82f3b0d9-d061-44da-85ee-746828a5def0',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/grand-cord-pdp-standard.mov?alt=media&token=833e570d-cb06-4ea2-9309-8fcefa7ad942'
 ]
 
 export const grandcordurls3 = [

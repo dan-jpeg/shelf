@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
-export default function ImageRow({ urls = [], height = 200, className = "", margins = [], showFixedVideo = false }) {
+export default function ImageRow({ urls = [], height = 200, className = "", margins = [], descriptions = [], showFixedVideo = false }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const normalizedHeight = typeof height === "number" ? `${height}px` : height;
 
@@ -11,9 +12,9 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
   };
 
   const goToNext = () => {
-    const currentIndex = urls.indexOf(selectedMedia);
+    const currentIndex = urls.indexOf(selectedMedia.url);
     const nextIndex = (currentIndex + 1) % urls.length;
-    setSelectedMedia(urls[nextIndex]);
+    setSelectedMedia({ url: urls[nextIndex], index: nextIndex });
   };
 
   return (
@@ -30,17 +31,20 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
               loop
               muted
               playsInline
-              onClick={() => setSelectedMedia(url)}
+              onClick={() => setSelectedMedia({ url, index })}
               className={`cursor-pointer ${marginClass}`}
             />
           ) : (
-            <img
+            <Image
               key={`${url}-${index}`}
               src={url}
               alt=""
               style={{ height: normalizedHeight, width: "auto" }}
-              onClick={() => setSelectedMedia(url)}
+              onClick={() => setSelectedMedia({ url, index })}
               className={`cursor-pointer ${marginClass}`}
+              width={0}
+              height={0}
+              sizes="100vw"
             />
           );
         })}
@@ -52,30 +56,38 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
           style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
           onClick={() => setSelectedMedia(null)}
         >
-          {isVideo(selectedMedia) ? (
-              <video
-                  src={selectedMedia}
-                  className="h-[60vh] w-auto cursor-pointer"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToNext();
-                  }}
-              />
-          ) : (
-              <img
-                  src={selectedMedia}
-                  alt=""
-                  className="h-auto w-[80vw] md:h-[60vh] md:w-auto cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    goToNext();
-                  }}
-              />
-          )}
+          <div className="flex flex-col items-center gap-2">
+            {isVideo(selectedMedia.url) ? (
+                <video
+                    src={selectedMedia.url}
+                    className="h-[60vh] w-auto cursor-pointer"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNext();
+                    }}
+                />
+            ) : (
+                <Image
+                    src={selectedMedia.url}
+                    alt=""
+                    className="h-auto w-[80vw] md:h-[60vh] md:w-auto cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNext();
+                    }}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                />
+            )}
+            {descriptions[selectedMedia.index] && (
+              <p className="text-[10pt]">{descriptions[selectedMedia.index]}</p>
+            )}
+          </div>
         </div>
       )}
 

@@ -33,7 +33,7 @@ export default function Home() {
 
                 <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - grand cord (web) </p>
-                    <ImageRow urls={grandcordurls1} height={200} margins={['','border-[0.5] -my-4']} />
+                    <ImageRow urls={grandcordurls1} height={200} margins={['','border-[0.5] -my-4']} descriptions={['editorial page','cart for large screens']} />
                 </div>
                 <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - event promotion </p>
@@ -42,7 +42,7 @@ export default function Home() {
 
                 <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - edie xu artist portfolio </p>
-                    <ImageRow urls={ediehomescreen} height={200} margins={['border-[1]']} />
+                    <ImageRow urls={ediehomescreen} height={200} margins={['border-[1]']} descriptions={['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery', '<3']}/>
                 </div>
 
 
@@ -56,7 +56,7 @@ export default function Home() {
 
                 <div className="mb-6 space-y-4">
                     <p className="mb-2"> [] roo product display pages</p>
-                    <ImageRow urls={roourls1} height={200}/>
+                    <ImageRow urls={roourls1} height={200} descriptions={['product display page a','product display page a2', 'drawer menu', 'collection view']}/>
                 </div>
                 <div className="mb-6">
                     <p className="mb-2"> [] union splash </p>
@@ -65,17 +65,17 @@ export default function Home() {
 
 
 
-                <div className="pt-12 lg:py-0 mb-6">
+                <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] event promotion</p>
                     <ImageRow urls={posterurls2} height={240} />
                 </div>
 
                 <div className="mb-6">
                     <p className="mb-2"> [] jing yi artist portfolio</p>
-                    <ImageRow urls={urlsrow3} height={200} margins={['','mx-2']}/>
+                    <ImageRow urls={urlsrow3} height={200} margins={['','mx-2']} descriptions={['archive view | home/splash page','archive grid', 'home page image cycle']}/>
                 </div>
                 <div className="mb-6">
-                    <p className="mb-2"> [] project a e-commerce design</p>
+                    <p className="mb-2"> [] project a e-commerce design descriptions={['product display page','product display page', 'menu / navigation']}</p>
                     <ImageRow urls={urlsprojecta} height={200}/>
 
 
@@ -93,13 +93,14 @@ export default function Home() {
 
                 <div className="mb-6">
                     <p className="mb-2"> [] edie xu additional</p>
-                    <ImageRow urls={urlsedie} height={200} margins={['-mx-8 -mt-2']}/>
+                    <ImageRow urls={urlsedie} height={200} margins={['-mx-8 -mt-2']} descriptions={['selected work archive', 'artist admin panel animations / layout']}/>
                 </div>
 
                 <div className="mb-6">
                     <p className="mb-2"> [] lapres coffee (native ios)</p>
-                    <ImageRow urls={urlslapres} height={200}/>
+                    <ImageRow urls={urlslapres} height={200} descriptions={['add coffee view | brew entry view', 'wireframes + design graphic']}/>
                 </div>
+
                 <div className="mb-6">
                     <p className="mb-2"> [] union deck & sketches</p>
                     <ImageRow urls={urlsunion} height={200}/>
@@ -111,10 +112,10 @@ export default function Home() {
 
 
 
-                <div className="pt-12 lg:py-0 mb-6">
+                <div className="lg:py-0 mb-6">
                     <p className="mb-2"> [] 1 </p>
-                    <ImageRow urls={grandcordurls2} height={200}  />
-                    <ImageRow urls={grandcordurls3} height={200}  />
+                    <ImageRow urls={grandcordurls2} height={200}  descriptions={['product display page, minimal, desktop', 'product display concept', 'product display concept']} margins={['','','border-[0.5]']}/>
+
                 </div>
 
 
