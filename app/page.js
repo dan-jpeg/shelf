@@ -23,23 +23,24 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="pt-[41vh] lg:pt-2">
+            <div className="pt-[41vh] space-y-12 lg:pt-2">
 
 
-                <div className="pt-12 lg:py-0 mb-6">
+                <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - grand cord (print) </p>
                     <ImageRow urls={urlsgrandcordprint} height={200} />
                 </div>
 
-                <div className="pt-12 lg:py-0 mb-6">
+                <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - grand cord (web) </p>
                     <ImageRow urls={grandcordurls1} height={200} margins={['','border-[0.5] -my-4']} />
                 </div>
-                <div className="pt-12 lg:py-0 mb-6">
+                <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - event promotion </p>
                     <ImageRow urls={posterurls} height={310} />
                 </div>
-                <div className="pt-12 lg:py-0 mb-6">
+
+                <div className=" lg:py-0 mb-6">
                     <p className="mb-2"> [] - edie xu artist portfolio </p>
                     <ImageRow urls={ediehomescreen} height={200} margins={['border-[1]']} />
                 </div>
