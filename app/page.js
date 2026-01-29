@@ -113,7 +113,7 @@ export default function Home() {
 
 
                 <div className="lg:py-0 mb-6">
-                    <p className="mb-2"> [] 1 </p>
+                    <p className="mb-2"> [] grand-cord additional </p>
                     <ImageRow urls={grandcordurls2} height={200}  descriptions={['product display page, minimal, desktop', 'product display concept', 'product display concept']} margins={['','','border-[0.5]']}/>
 
                 </div>
