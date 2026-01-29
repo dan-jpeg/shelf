@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function ImageRow({ urls = [], height = 200, className = "", margins = [] }) {
+export default function ImageRow({ urls = [], height = 200, className = "", margins = [], showFixedVideo = false }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const normalizedHeight = typeof height === "number" ? `${height}px` : height;
 
@@ -10,9 +10,15 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
     return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
   };
 
+  const goToNext = () => {
+    const currentIndex = urls.indexOf(selectedMedia);
+    const nextIndex = (currentIndex + 1) % urls.length;
+    setSelectedMedia(urls[nextIndex]);
+  };
+
   return (
     <>
-      <div className={`flex flex-row items-center gap-2 overflow-x-auto lg:flex-wrap ${className}`}>
+      <div className={`flex flex-row items-center gap-2 overflow-x-auto lg:flex-wrap ${className} `}>
         {urls.map((url, index) => {
           const marginClass = margins[index] || '';
           return isVideo(url) ? (
@@ -47,23 +53,33 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
           onClick={() => setSelectedMedia(null)}
         >
           {isVideo(selectedMedia) ? (
-            <video
-              src={selectedMedia}
-              style={{ height: '60vh', width: 'auto' }}
-              autoPlay
-              loop
-              muted
-              playsInline
-            />
+              <video
+                  src={selectedMedia}
+                  className="h-[60vh] w-auto cursor-pointer"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNext();
+                  }}
+              />
           ) : (
-            <img
-              src={selectedMedia}
-              alt=""
-              style={{ height: '60vh', width: 'auto' }}
-            />
+              <img
+                  src={selectedMedia}
+                  alt=""
+                  className="h-auto w-[80vw] md:h-[60vh] md:w-auto cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNext();
+                  }}
+              />
           )}
         </div>
       )}
+
+
     </>
   );
 }
