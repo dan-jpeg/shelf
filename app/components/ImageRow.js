@@ -67,7 +67,11 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
                     playsInline
                     onClick={(e) => {
                       e.stopPropagation();
-                      goToNext();
+                      if (window.innerWidth >= 1024) {
+                        goToNext();
+                      } else {
+                        setSelectedMedia(null);
+                      }
                     }}
                 />
             ) : (
@@ -77,7 +81,11 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
                     className="h-auto w-[80vw] md:h-[60vh] md:w-auto cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      goToNext();
+                      if (window.innerWidth >= 1024) {
+                        goToNext();
+                      } else {
+                        setSelectedMedia(null);
+                      }
                     }}
                     width={0}
                     height={0}
