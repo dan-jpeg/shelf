@@ -56,7 +56,7 @@ export default function Home() {
                 <div className="mb-6 space-y-4">
                     <p className="mb-2"> [] roo product display pages</p>
                     <ImageRow urls={roourls1} height={200}/>
-                </div>ç
+                </div>
                 <div className="mb-6">
                     <p className="mb-2"> [] union splash </p>
                     <ImageRow urls={urlsrow1} height={200}/>
