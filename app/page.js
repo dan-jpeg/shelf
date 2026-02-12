@@ -76,7 +76,7 @@ export default function Home() {
                 </div>
                 <div className="mb-6">
                     <p className="mb-2"> [] project a e-commerce design </p>
-                    <ImageRow urls={urlsprojecta} height={200} descriptions={['product display page','product display page', 'menu / navigation']} />
+                    <ImageRow urls={urlsprojecta} height={200} descriptions={['product display page','product display page', 'menu / navigation']}  />
 
 
                 </div>
@@ -101,10 +101,10 @@ export default function Home() {
                     <ImageRow urls={urlslapres} height={200} descriptions={['add coffee view | brew entry view', 'wireframes + design graphic']}/>
                 </div>
 
-                <div className="mb-6">
-                    <p className="mb-2"> [] union deck & sketches</p>
-                    <ImageRow urls={urlsunion} height={200}/>
-                </div>
+                {/*<div className="mb-6">*/}
+                {/*    <p className="mb-2"> [] union deck & sketches</p>*/}
+                {/*    <ImageRow urls={urlsunion} height={200}/>*/}
+                {/*</div>*/}
 
 
 
