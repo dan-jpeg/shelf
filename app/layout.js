@@ -22,6 +22,20 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div
+          style={{
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            width: '50vw',
+            height: '100vh',
+            backgroundImage: 'url(/drawing.JPG)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: -1,
+            pointerEvents: 'none',
+          }}
+        />
         {children}
       </body>
     </html>
