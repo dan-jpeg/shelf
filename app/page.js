@@ -56,7 +56,7 @@ const rows = [
     { label: '[] - event promotion', urls: posterurls, height: 410 },
     { label: '[] - union splash', urls: urlsrow1, height: 200 },
     { label: '[] -  event promotion', urls: posterurls2, height: 240 },
-    { label: '[] -  clock ', urls: clockUrl, height: 240 },
+    { label: '[] -  clock ', urls: clockUrl, height: 100 },
 
 
     // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },
