@@ -1,46 +1,91 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-export default function ImageRow({ urls = [], height = 200, className = "", margins = [], descriptions = [], showFixedVideo = false }) {
+// entry is either a string URL or { mp4, webm } for multi-source video
+const isVideoEntry = (entry) => {
+  if (typeof entry === 'object' && entry !== null) return true;
+  return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(entry);
+};
+
+const entryKey = (entry, index) => {
+  if (typeof entry === 'string') return `${entry}-${index}`;
+  return `${entry.mp4 || entry.webm}-${index}`;
+};
+
+// Renders a video with either a single src or <source> tags for multi-format
+function VideoPlayer({ entry, ...videoProps }) {
+  if (typeof entry === 'string') {
+    return <video src={entry} {...videoProps} />;
+  }
+  return (
+    <video {...videoProps}>
+      {entry.webm && <source src={entry.webm} type="video/webm" />}
+      {entry.mp4 && <source src={entry.mp4} type="video/mp4" />}
+    </video>
+  );
+}
+
+export default function ImageRow({ urls = [], height = 200, className = "", margins = [], descriptions = [] }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
-  const normalizedHeight = typeof height === "number" ? `${height}px` : height;
+  const [heightMultiplier, setHeightMultiplier] = useState(1);
 
-  const isVideo = (url) => {
-    return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
-  };
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 1800px)');
+    const update = (e) => setHeightMultiplier(e.matches ? 1.2 : 1);
+    update(mql);
+    mql.addEventListener('change', update);
+    return () => mql.removeEventListener('change', update);
+  }, []);
 
-  const goToNext = () => {
-    const currentIndex = urls.indexOf(selectedMedia.url);
-    const nextIndex = (currentIndex + 1) % urls.length;
-    setSelectedMedia({ url: urls[nextIndex], index: nextIndex });
+  // Keyboard navigation
+  useEffect(() => {
+    if (!selectedMedia) return;
+    const handleKey = (e) => {
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'ArrowLeft') navigate(-1);
+      if (e.key === 'Escape') setSelectedMedia(null);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [selectedMedia]);
+
+  const computedHeight = typeof height === 'number'
+    ? `${Math.round(height * heightMultiplier)}px`
+    : `calc(${height} * ${heightMultiplier})`;
+
+  const navigate = (delta) => {
+    setSelectedMedia(prev => {
+      const newIndex = (prev.index + delta + urls.length) % urls.length;
+      return { entry: urls[newIndex], index: newIndex };
+    });
   };
 
   return (
     <>
-      <div className={`flex flex-row  scrollbar-hide items-center gap-2 overflow-x-auto lg:flex-wrap ${className} `}>
-        {urls.map((url, index) => {
+      <div className={`flex flex-row scrollbar-hide items-center gap-2 overflow-x-auto lg:flex-wrap ${className}`}>
+        {urls.map((entry, index) => {
           const marginClass = margins[index] || '';
-          return isVideo(url) ? (
-            <video
-              key={`${url}-${index}`}
-              src={url}
-              style={{ height: normalizedHeight, width: "auto" }}
+          return isVideoEntry(entry) ? (
+            <VideoPlayer
+              key={entryKey(entry, index)}
+              entry={entry}
+              style={{ height: computedHeight, width: 'auto' }}
               autoPlay
               loop
               muted
               playsInline
-              onClick={() => setSelectedMedia({ url, index })}
+              onClick={() => setSelectedMedia({ entry, index })}
               className={`cursor-pointer ${marginClass}`}
             />
           ) : (
             <Image
-              key={`${url}-${index}`}
-              src={url}
+              key={entryKey(entry, index)}
+              src={entry}
               alt=""
-              style={{ height: normalizedHeight, width: "auto" }}
-              onClick={() => setSelectedMedia({ url, index })}
+              style={{ height: computedHeight, width: 'auto' }}
+              onClick={() => setSelectedMedia({ entry, index })}
               className={`cursor-pointer ${marginClass}`}
               width={0}
               height={0}
@@ -56,50 +101,58 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
           style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
           onClick={() => setSelectedMedia(null)}
         >
-          <div className="flex flex-col items-center gap-2">
-            {isVideo(selectedMedia.url) ? (
-                <video
-                    src={selectedMedia.url}
-                    className="h-[60vh] w-auto cursor-pointer"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (window.innerWidth >= 1024) {
-                        goToNext();
-                      } else {
-                        setSelectedMedia(null);
-                      }
-                    }}
+          <div
+            className="flex flex-col items-center gap-2"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-4">
+              {urls.length > 1 && (
+                <button
+                  className="font-mono text-[8.5pt] tracking-[0.9] cursor-pointer px-2 py-1"
+                  onClick={() => navigate(-1)}
+                >
+                  ←
+                </button>
+              )}
+
+              {isVideoEntry(selectedMedia.entry) ? (
+                <VideoPlayer
+                  key={selectedMedia.index}
+                  entry={selectedMedia.entry}
+                  className="h-[60vh] w-auto"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
                 />
-            ) : (
+              ) : (
                 <Image
-                    src={selectedMedia.url}
-                    alt=""
-                    className="h-auto w-[80vw] md:h-[60vh] md:w-auto cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (window.innerWidth >= 1024) {
-                        goToNext();
-                      } else {
-                        setSelectedMedia(null);
-                      }
-                    }}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
+                  key={selectedMedia.index}
+                  src={selectedMedia.entry}
+                  alt=""
+                  className="h-auto w-[80vw] md:h-[60vh] md:w-auto"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
                 />
-            )}
+              )}
+
+              {urls.length > 1 && (
+                <button
+                  className="font-mono text-[8.5pt] tracking-[0.9] cursor-pointer px-2 py-1"
+                  onClick={() => navigate(1)}
+                >
+                  →
+                </button>
+              )}
+            </div>
+
             {descriptions[selectedMedia.index] && (
               <p className="text-[10pt]">{descriptions[selectedMedia.index]}</p>
             )}
           </div>
         </div>
       )}
-
-
     </>
   );
 }
