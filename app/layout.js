@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div
-          className="hidden lg:flex"
+          className="hidden "
           style={{
             position: 'fixed',
             right: 0,

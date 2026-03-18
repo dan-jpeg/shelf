@@ -48,8 +48,8 @@ const rows = [
 
 
 
-    { label: '', urls: talentedDemo, height: 310 },
-    { label: '[] - talented brand identity / deck', urls: talentedSlides1, height: 200, cycler: true },
+    { label: '[] - talented brand identity / deck', urls: talentedDemo, height: 310 },
+    { label: '', urls: talentedSlides1, height: 200, cycler: true },
     { label: '[]-  placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
     { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, margins: ['-mx-12 -mt-4'] },
     { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery', '<3'] },
