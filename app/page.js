@@ -27,7 +27,14 @@ import {
     majorMoves1,
     majorMoves2,
     talentedurls,
-    talentedSlides1, talentedSlides2, majorMovesRoundedStory, jingyiurls, jxuArchiveVideo, ediehomescreenBig, talentedDemo
+    talentedSlides1,
+    talentedSlides2,
+    majorMovesRoundedStory,
+    jingyiurls,
+    jxuArchiveVideo,
+    ediehomescreenBig,
+    talentedDemo,
+    clockUrl
 } from "@/app/urls";
 
 const rows = [
@@ -49,6 +56,7 @@ const rows = [
     { label: '[] - event promotion', urls: posterurls, height: 410 },
     { label: '[] - union splash', urls: urlsrow1, height: 200 },
     { label: '[] -  event promotion', urls: posterurls2, height: 240 },
+    { label: '[] -  clock ', urls: clockUrl, height: 240 },
 
 
     // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },

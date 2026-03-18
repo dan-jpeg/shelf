@@ -161,6 +161,10 @@ export const majorMoves1 = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2Fmajor-moves-duo.png?alt=media&token=dcb0ba3d-ea15-4fa5-b92f-970e25e70347'
 ]
 
+export const clockUrl = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-jxu-video%2Fclock-cropped.mov?alt=media&token=a4470aea-38d2-47a8-85a7-4a9c27818881'
+]
+
 export const talentedSlides1 = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-static1.webp?alt=media&token=d75c8433-65fa-4d5e-a281-593d5e13c6ac',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-static2.webp?alt=media&token=8b6658e3-829a-46da-9bf9-2cbcaab232cc',
