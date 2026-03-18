@@ -4,22 +4,54 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import ImageRow from "./components/ImageRow";
 import { isVideoEntry, entryKey, VideoPlayer } from "./components/ImageRow";
-import {urlsrow1, roourls1, urlsrow3, urlslapres, urlsedie, urlsgrandcordprint, urlsprojecta, urlsrow4, urlsrow5, urlsunion,urlsjinniphone, jinnishome, grandcordurls1, grandcordurls2, grandcordurls3, ediehomescreen, posterurls, posterurls2} from "@/app/urls";
+import {
+    urlsrow1,
+    roourls1,
+    urlsrow3,
+    urlslapres,
+    urlsedie,
+    urlsgrandcordprint,
+    urlsprojecta,
+    urlsrow4,
+    urlsrow5,
+    urlsunion,
+    urlsjinniphone,
+    jinnishome,
+    grandcordurls1,
+    grandcordurls2,
+    grandcordurls3,
+    ediehomescreen,
+    posterurls,
+    posterurls2,
+    majorMoves1,
+    majorMoves2,
+    talentedurls,
+    talentedSlides1, talentedSlides2, majorMovesRoundedStory, jingyiurls, jxuArchiveVideo, ediehomescreenBig, talentedDemo
+} from "@/app/urls";
 
 const rows = [
     { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200 },
+    { label: 'jxu archive scroll', urls: jxuArchiveVideo, height: 310 },
+    { label: '[] jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'] },
+    { label: '[] roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
     { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5] -my-4'], descriptions: ['editorial page','cart for large screens'] },
-    { label: '[] - event promotion', urls: posterurls, height: 310 },
+    { label: '[] - event art direction ', urls: majorMoves1, height: 310 },
+    { label: '', urls: majorMovesRoundedStory, height: 210 },
+
+
+
+    { label: '', urls: talentedDemo, height: 310 },
+    { label: 'talented brand identity / deck', urls: talentedSlides1, height: 200 },
+    { label: 'talented cont.', urls: talentedSlides2, height: 200 },
+    { label: '[] placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
+    { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 400, margins: ['-mx-12'] },
     { label: '[] - edie xu artist portfolio', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery', '<3'] },
-    { label: '[] roo product display pages', urls: roourls1, height: 200, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
+    { label: '[] - event promotion', urls: posterurls, height: 410 },
     { label: '[] union splash', urls: urlsrow1, height: 200 },
     { label: '[] event promotion', urls: posterurls2, height: 240 },
-    { label: '[] jing yi artist portfolio', urls: urlsrow3, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'] },
-    { label: '[] project a e-commerce design', urls: urlsprojecta, height: 200, descriptions: ['product display page','product display page', 'menu / navigation'] },
-    { label: '[] jing yi additional', urls: urlsjinniphone, height: 240, margins: ['-mx-8 -my-1'] },
-    { label: '[] edie xu additional', urls: urlsedie, height: 200, margins: ['-mx-8 -mt-2'], descriptions: ['selected work archive', 'artist admin panel animations / layout'] },
-    { label: '[] lapres coffee (native ios)', urls: urlslapres, height: 200, descriptions: ['add coffee view | brew entry view', 'wireframes + design graphic'] },
-    { label: '[] grand-cord additional', urls: grandcordurls2, height: 200, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['','','border-[0.5]'] },
+
+
+    // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },
 ];
 
 export default function Home() {
@@ -51,7 +83,7 @@ export default function Home() {
     const selectedDescription = selectedRow?.descriptions?.[selected?.mediaIndex];
 
     return (
-        <div className="flex w-screen font-mono text-[8.5pt] flex-col  px-2 overflow-y-auto scrollbar-hide">
+        <div className="flex w-screen bg-white font-mono text-[8.5pt] flex-col  px-2 overflow-y-auto scrollbar-hide">
             <video
                 src="https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/common-design-spinner.MOV?alt=media&token=b62f41cc-fb22-4ecd-a0bb-c04b24f9e66a"
                 autoPlay

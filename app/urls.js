@@ -20,6 +20,17 @@ export const grandcordurls2 = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/grand-cord-pdp-standard.mov?alt=media&token=833e570d-cb06-4ea2-9309-8fcefa7ad942'
 ]
 
+export const jxuArchiveVideo = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-jxu-video%2Fjxu-archive-red.mp4?alt=media&token=43b2a592-18e1-4cfa-98fa-138f751683a2',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/jxu-home.mov?alt=media&token=0771561b-15e1-459b-8568-ef4f402ac599',
+]
+
+export const talentedDemoVideo = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-video%2Ftalented-vid.mp4?alt=media&token=0b01f8bc-a77d-4409-ae21-c462e8e1ef50',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-video%2Ftalented-roadmap-animation.mp4?alt=media&token=de386c92-d4d5-4429-8369-1f7aade2e8bd',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-video%2Ftalented-demo.mp4?alt=media&token=47c76e8c-d93c-4f9f-bdd8-3a20761d1403',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-video%2Ftalented-animation-v2.mp4?alt=media&token=3a482e8d-c063-4cf7-ad02-8000ab9d1255'
+]
 export const grandcordurls3 = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/grand-cord-pdp-standard.mov?alt=media&token=833e570d-cb06-4ea2-9309-8fcefa7ad942',
 ]
@@ -50,10 +61,11 @@ export const urlsrow5 = [
 
 ]
 
-export const urlsrow3 = [
+export const jingyiurls = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/JXU-FRAMES.png?alt=media&token=5873e562-b689-45a9-80b9-4379192e6f85',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/jxu-archive-grid.png?alt=media&token=876a72de-5ea5-4e9e-98e2-4e75ff655210',
-    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/jxu-home.mov?alt=media&token=0771561b-15e1-459b-8568-ef4f402ac599'
+
+
 
 
 ]
@@ -63,10 +75,7 @@ export const urlsjinniphone = [
 ]
 
 export const urlsedie = [
-    {
-        mp4: 'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/exu-scroll-qhd.mp4?alt=media&token=f1259bcd-7efb-4556-a934-fb69d2493e11',
-        webm: 'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/webm%2Fexu-scroll-qhd.webm?alt=media&token=0166ce9a-2425-43d5-bbaf-3915f420b68b'
-    },
+
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/edie-admin-panel-demo.mov?alt=media&token=4a78782b-4483-452e-b443-21545c544454'
 ]
 
@@ -102,7 +111,14 @@ export const ediehomescreen = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/edie-home-screen.mov?alt=media&token=cb716278-4af1-4bbc-8973-f936e3550add',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/edie-small.PNG?alt=media&token=5b144f7b-3b2b-4fba-af76-5445d8a25722',
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/exu-exhibition-demo.mov?alt=media&token=7ecde752-f6d9-4951-bc09-52836ed8cba3',
-    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/edie-heart.JPG?alt=media&token=d1a4b61d-f6cf-4561-8bb7-0c8c3530a678'
+
+]
+
+export const ediehomescreenBig = [
+    {
+        mp4: 'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/exu-scroll-qhd.mp4?alt=media&token=f1259bcd-7efb-4556-a934-fb69d2493e11',
+        webm: 'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/webm%2Fexu-scroll-qhd.webm?alt=media&token=0166ce9a-2425-43d5-bbaf-3915f420b68b'
+    }
 ]
 
 export const posterurls = [
@@ -125,6 +141,10 @@ export const talentedurls = [
 
 ]
 
+export const talentedDemo = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-video%2Ftalented-demo.mp4?alt=media&token=47c76e8c-d93c-4f9f-bdd8-3a20761d1403'
+]
+
 // export const talentedurls2  = [
 //     'https://firebasestorage.googlepis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-video.mov?alt=media&token=eafcd53a-2595-4a47-ba90-b7742899ef75',
 // ]
@@ -136,3 +156,28 @@ export const talentedwebp1 = [
     'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-static4.webp?alt=media&token=9184e876-148a-4fac-b39c-2c183c67d272'
 
 ]
+
+export const majorMoves1 = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2Fmajor-moves-duo.png?alt=media&token=dcb0ba3d-ea15-4fa5-b92f-970e25e70347'
+]
+
+export const talentedSlides1 = [
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-static1.webp?alt=media&token=d75c8433-65fa-4d5e-a281-593d5e13c6ac',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/talented-static2.webp?alt=media&token=8b6658e3-829a-46da-9bf9-2cbcaab232cc',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-img%2Ftalented.png?alt=media&token=c741560c-7974-423d-ad52-723d7780a62f',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-img%2Ftalented-slide-border-2px.png?alt=media&token=4261b2d8-a2d8-4b7d-85b4-2f9f109bb31d',
+    'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-img%2Ftalented-slide-border-2px-1.png?alt=media&token=8a2cfae7-2ce4-4ec4-91ec-83ef4b1e8034',
+
+]
+
+export const majorMovesRoundedStory = [
+    "https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2FIG%20STORY%207.png?alt=media&token=647ea898-6d3d-4a27-b825-513ccd45b015",
+    "https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2FIG%20STORY%208.png?alt=media&token=8541d491-ce45-4960-9089-152dbbd9dbaa",
+    "https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2FIG%20STORY%207-1.png?alt=media&token=a4c4a7e9-75ee-4bb7-b0bc-746a99b22aaf",
+]
+
+export const talentedSlides2 = [
+        'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-img%2Ftalented-slide-border-2px-2.png?alt=media&token=5a614638-391a-4a1c-9799-c01eb19afbd2',
+        'https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-talented-img%2Ftalented-slide-border-2px-3.png?alt=media&token=285652ad-cff1-41b0-b5dd-bdab19eeaa51'
+]
+

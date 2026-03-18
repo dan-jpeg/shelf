@@ -23,13 +23,13 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div
-          className="hidden xl:flex"
+          className="hidden l:flex"
           style={{
             position: 'fixed',
             right: 0,
-            top: 0,
-            width: '50vw',
-            height: '100vh',
+            bottom: 0,
+            width: '210px',
+            height: '120px',
             backgroundImage: 'url(https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/01-major-img%2Fflower-drawing.png?alt=media&token=76dd23df-55ad-4ad8-84fd-6a8eb0c554e1)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
