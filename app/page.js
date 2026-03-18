@@ -32,9 +32,9 @@ import {
 
 const rows = [
     { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200 },
-    { label: 'jxu archive scroll', urls: jxuArchiveVideo, height: 310 },
-    { label: '[] jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'] },
-    { label: '[] roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
+    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310 },
+    { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'] },
+    { label: '[] - roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
     { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5] -my-4'], descriptions: ['editorial page','cart for large screens'] },
     { label: '[] - event art direction ', urls: majorMoves1, height: 310 },
     { label: '', urls: majorMovesRoundedStory, height: 210 },
@@ -42,13 +42,13 @@ const rows = [
 
 
     { label: '', urls: talentedDemo, height: 310 },
-    { label: 'talented brand identity / deck', urls: talentedSlides1, height: 200, cycler: true },
-    { label: '[] placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
+    { label: '[] - talented brand identity / deck', urls: talentedSlides1, height: 200, cycler: true },
+    { label: '[]-  placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
     { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, margins: ['-mx-12 -mt-4'] },
     { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery', '<3'] },
     { label: '[] - event promotion', urls: posterurls, height: 410 },
-    { label: '[] union splash', urls: urlsrow1, height: 200 },
-    { label: '[] event promotion', urls: posterurls2, height: 240 },
+    { label: '[] - union splash', urls: urlsrow1, height: 200 },
+    { label: '[] -  event promotion', urls: posterurls2, height: 240 },
 
 
     // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },
