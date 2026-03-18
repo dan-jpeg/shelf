@@ -56,7 +56,7 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
             muted
             playsInline
             onClick={() => onSelect?.(index)}
-            className={`cursor-pointer ${marginClass}`}
+            className={`cursor-zoom-in ${marginClass}`}
           />
         ) : (
           <Image
@@ -65,7 +65,7 @@ export default function ImageRow({ urls = [], height = 200, className = "", marg
             alt=""
             style={{ height: computedHeight, width: 'auto' }}
             onClick={() => onSelect?.(index)}
-            className={`cursor-pointer ${marginClass}`}
+            className={`cursor-zoom-in ${marginClass}`}
             width={0}
             height={0}
             sizes="100vw"
