@@ -5,6 +5,7 @@ import Image from 'next/image';
 import ImageRow from "./components/ImageRow";
 import { isVideoEntry, entryKey, VideoPlayer } from "./components/ImageRow";
 import ImageCycler from "./components/ImageCycler";
+import JxuArchiveRow from "./components/JxuArchiveRow";
 import {
     urlsrow1,
     roourls1,
@@ -39,20 +40,20 @@ import {
 
 const rows = [
     { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200 },
-    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310 },
-    { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'] },
+    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', labelClassName: ' xs:translate-y-4  sm:translate-y-0 ' },
+    { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'],  labelClassName: 'pt-0'  },
     { label: '[] - roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
     { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5] -my-4'], descriptions: ['editorial page','cart for large screens'] },
     { label: '[] - event art direction ', urls: majorMoves1, height: 310 },
-    { label: '', urls: majorMovesRoundedStory, height: 210 },
+    { label: '', urls: majorMovesRoundedStory, height: 210,  className: '-mt-8' },
 
 
 
     { label: '[] - talented brand identity / deck', urls: talentedDemo, height: 310 },
-    { label: '', urls: talentedSlides1, height: 200, cycler: true },
+    { label: '', urls: talentedSlides1, height: 200, cycler: true,  className: '-mt-8' },
     { label: '[]-  placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
     { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, margins: ['-mx-12 -mt-4'] },
-    { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery', '<3'] },
+    { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery'],  className: '-mt-8' },
     { label: '[] - event promotion', urls: posterurls, height: 410 },
     { label: '[] - union splash', urls: urlsrow1, height: 200 },
     { label: '[] -  event promotion', urls: posterurls2, height: 240 },
@@ -130,11 +131,13 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="pt-[41vh] space-y-12 lg:pt-2">
+            <div className="pt-[96px] space-y-12 lg:pt-2">
                 {rows.map((row, i) => (
-                    <div key={i} ref={el => rowRefs.current[i] = el} className="lg:py-0 mb-6">
-                        <p className="mb-2"> {row.label} </p>
-                        {row.cycler ? (
+                    <div key={i} ref={el => rowRefs.current[i] = el} className={`lg:py-0 mb-12 ${row.className || ''}`}>
+                        <p className={`mb-2 ${row.labelClassName || ''}`}> {row.label} </p>
+                        {row.custom === 'jxu-archive' ? (
+                            <JxuArchiveRow onSelect={(mediaIndex) => setSelected({ rowIndex: i, mediaIndex })} />
+                        ) : row.cycler ? (
                             <ImageCycler images={row.urls} interval={1000} height={row.height} onSelect={(mediaIndex) => setSelected({ rowIndex: i, mediaIndex })} />
                         ) : (
                             <ImageRow

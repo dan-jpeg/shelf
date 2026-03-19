@@ -40,3 +40,9 @@ body {
 body {
   overflow-x: hidden;
 }
+
+@theme {
+  --breakpoint-xs: 450px;
+  --breakpoint-sm: 500px;
+  --breakpoint-md: 768px;
+}
