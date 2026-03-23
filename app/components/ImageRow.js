@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 // entry is either a string URL or { mp4, webm } for multi-source video
@@ -16,11 +16,26 @@ export const entryKey = (entry, index) => {
 
 // Renders a video with either a single src or <source> tags for multi-format
 export function VideoPlayer({ entry, ...videoProps }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.load();
+
+    if (videoProps.autoPlay) {
+      const playPromise = video.play();
+      playPromise?.catch(() => {});
+    }
+  }, [entry, videoProps.autoPlay]);
+
   if (typeof entry === 'string') {
-    return <video src={entry} {...videoProps} />;
+    return <video ref={videoRef} src={entry} preload="auto" {...videoProps} />;
   }
+
   return (
-    <video {...videoProps}>
+    <video ref={videoRef} preload="auto" {...videoProps}>
       {entry.webm && <source src={entry.webm} type="video/webm" />}
       {entry.mp4 && <source src={entry.mp4} type="video/mp4" />}
     </video>

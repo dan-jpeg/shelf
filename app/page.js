@@ -6,6 +6,8 @@ import ImageRow from "./components/ImageRow";
 import { isVideoEntry, entryKey, VideoPlayer } from "./components/ImageRow";
 import ImageCycler from "./components/ImageCycler";
 import JxuArchiveRow from "./components/JxuArchiveRow";
+import ProjectShowcase from "./components/ProjectShowcase";
+import SiteMapOverlay from "./components/SiteMapOverlay";
 import {
     urlsrow1,
     roourls1,
@@ -38,22 +40,22 @@ import {
     clockUrl
 } from "@/app/urls";
 
-const rows = [
+const baseRows = [
     { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200 },
-    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', labelClassName: ' xs:translate-y-4  sm:translate-y-0 ' },
+    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', labelClassName: ' xs:translate-y-4  sm:translate-y-3 ' },
     { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'],  labelClassName: 'pt-0'  },
     { label: '[] - roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
-    { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5] -my-4'], descriptions: ['editorial page','cart for large screens'] },
+    { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5]'], descriptions: ['editorial page','cart for large screens'] },
     { label: '[] - event art direction ', urls: majorMoves1, height: 310 },
-    { label: '', urls: majorMovesRoundedStory, height: 210,  className: '-mt-8' },
+    { label: '', urls: majorMovesRoundedStory, height: 210 },
 
 
 
     { label: '[] - talented brand identity / deck', urls: talentedDemo, height: 310 },
-    { label: '', urls: talentedSlides1, height: 200, cycler: true,  className: '-mt-8' },
+    { label: '', urls: talentedSlides1, height: 200, cycler: true },
     { label: '[]-  placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
-    { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, margins: ['-mx-12 -mt-4'] },
-    { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery'],  className: '-mt-8' },
+    { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, labelClassName: 'translate-y-10' },
+    { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery'] },
     { label: '[] - event promotion', urls: posterurls, height: 410 },
     { label: '[] - union splash', urls: urlsrow1, height: 200 },
     { label: '[] -  event promotion', urls: posterurls2, height: 240 },
@@ -63,9 +65,29 @@ const rows = [
     // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },
 ];
 
+const rows = baseRows.map((row, index) => ({ ...row, id: index }));
+
+const showcases = rows.reduce((groups, row) => {
+    const hasTitle = row.label.trim().length > 0;
+
+    if (hasTitle || groups.length === 0) {
+        groups.push({
+            id: row.id,
+            title: row.label,
+            titleClassName: row.labelClassName || '',
+            rows: [row],
+        });
+        return groups;
+    }
+
+    groups[groups.length - 1].rows.push(row);
+    return groups;
+}, []);
+
 export default function Home() {
     const [selected, setSelected] = useState(null); // { rowIndex, mediaIndex }
     const [activeKey, setActiveKey] = useState(null);
+    const [visibleRowIds, setVisibleRowIds] = useState(() => new Set());
     const rowRefs = useRef([]);
     const scrollContainerRef = useRef(null);
 
@@ -107,12 +129,95 @@ export default function Home() {
         }
     }, [selected?.rowIndex]);
 
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                setVisibleRowIds((prev) => {
+                    const next = new Set(prev);
+
+                    entries.forEach((entry) => {
+                        const rowId = Number(entry.target.dataset.rowId);
+                        if (Number.isNaN(rowId)) return;
+
+                        if (entry.isIntersecting) {
+                            next.add(rowId);
+                        } else {
+                            next.delete(rowId);
+                        }
+                    });
+
+                    return next;
+                });
+            },
+            {
+                root: container,
+                threshold: 0.35,
+            }
+        );
+
+        rowRefs.current.forEach((el, index) => {
+            if (!el) return;
+            el.dataset.rowId = String(index);
+            observer.observe(el);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
     const selectedRow = selected ? rows[selected.rowIndex] : null;
     const selectedEntry = selectedRow ? selectedRow.urls[selected.mediaIndex] : null;
     const selectedDescription = selectedRow?.descriptions?.[selected?.mediaIndex];
 
+    const renderRow = (row) => {
+        if (row.custom === 'jxu-archive') {
+            return <JxuArchiveRow onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })} />;
+        }
+
+        if (row.cycler) {
+            return (
+                <ImageCycler
+                    images={row.urls}
+                    interval={1000}
+                    height={row.height}
+                    onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
+                />
+            );
+        }
+
+        return (
+            <ImageRow
+                urls={row.urls}
+                height={row.height}
+                margins={row.margins}
+                onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
+            />
+        );
+    };
+
+    const handleOverlaySelect = (rowId, mediaIndex) => {
+        if (selected) {
+            setSelected({
+                rowIndex: rowId,
+                mediaIndex: rows[rowId].cycler ? 0 : mediaIndex,
+            });
+            return;
+        }
+
+        const container = scrollContainerRef.current;
+        const el = rowRefs.current[rowId];
+        if (!container || !el) return;
+
+        container.scrollTo({
+            top: el.offsetTop,
+            behavior: 'smooth',
+        });
+    };
+
     return (
-        <div ref={scrollContainerRef} className="flex w-screen font-mono text-[8.5pt] flex-col px-2 overflow-y-auto scrollbar-hide">
+        <div ref={scrollContainerRef} className="flex h-screen w-screen snap-y snap-mandatory flex-col overflow-y-auto px-2 font-mono text-[8.5pt] scrollbar-hide lg:snap-none">
             <video
                 src="https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/common-design-spinner.MOV?alt=media&token=b62f41cc-fb22-4ecd-a0bb-c04b24f9e66a"
                 autoPlay
@@ -131,23 +236,33 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="pt-[96px] space-y-12 lg:pt-2">
-                {rows.map((row, i) => (
-                    <div key={i} ref={el => rowRefs.current[i] = el} className={`lg:py-0 mb-12 ${row.className || ''}`}>
-                        <p className={`mb-2 ${row.labelClassName || ''}`}> {row.label} </p>
-                        {row.custom === 'jxu-archive' ? (
-                            <JxuArchiveRow onSelect={(mediaIndex) => setSelected({ rowIndex: i, mediaIndex })} />
-                        ) : row.cycler ? (
-                            <ImageCycler images={row.urls} interval={1000} height={row.height} onSelect={(mediaIndex) => setSelected({ rowIndex: i, mediaIndex })} />
-                        ) : (
-                            <ImageRow
-                                urls={row.urls}
-                                height={row.height}
-                                margins={row.margins}
-                                onSelect={(mediaIndex) => setSelected({ rowIndex: i, mediaIndex })}
-                            />
-                        )}
-                    </div>
+            <SiteMapOverlay
+                rows={rows}
+                visibleRowIds={visibleRowIds}
+                onDotClick={handleOverlaySelect}
+                selected={selected}
+                desktopPosition="underRightHeader"
+            />
+
+            <div className="lg:space-y-12 lg:pt-2">
+                {showcases.map((showcase) => (
+                    <ProjectShowcase
+                        key={showcase.id}
+                        title={showcase.title}
+                        titleClassName={showcase.titleClassName}
+                        className="lg:mb-12"
+                    >
+                        {showcase.rows.map((row) => (
+                            <div
+                                key={row.id}
+                                ref={el => rowRefs.current[row.id] = el}
+                                data-row-id={row.id}
+                                className={`flex w-full justify-center lg:block ${row.className || ''}`}
+                            >
+                                {renderRow(row)}
+                            </div>
+                        ))}
+                    </ProjectShowcase>
                 ))}
             </div>
 
@@ -163,7 +278,6 @@ export default function Home() {
                     >
                         {isVideoEntry(selectedEntry) ? (
                             <VideoPlayer
-                                key={`${selected.rowIndex}-${selected.mediaIndex}`}
                                 entry={selectedEntry}
                                 className="h-[60vh] w-auto"
                                 autoPlay
