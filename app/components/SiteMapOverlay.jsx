@@ -65,11 +65,13 @@ export default function SiteMapOverlay({
   }, [viewportSize.height, viewportSize.width]);
 
   const updateHoveredDots = (nextCursorPosition) => {
+    const scaledCursorWidth = cursorDimensions.width * cursorScale;
+    const scaledCursorHeight = cursorDimensions.height * cursorScale;
     const cursorRect = {
-      left: nextCursorPosition.x - (cursorDimensions.width / 2),
-      right: nextCursorPosition.x + (cursorDimensions.width / 2),
-      top: nextCursorPosition.y - (cursorDimensions.height / 2),
-      bottom: nextCursorPosition.y + (cursorDimensions.height / 2),
+      left: nextCursorPosition.x - (scaledCursorWidth / 2),
+      right: nextCursorPosition.x + (scaledCursorWidth / 2),
+      top: nextCursorPosition.y - (scaledCursorHeight / 2),
+      bottom: nextCursorPosition.y + (scaledCursorHeight / 2),
     };
 
     const nextHoveredDotKeys = new Set();
@@ -78,16 +80,19 @@ export default function SiteMapOverlay({
       if (!el) return;
 
       const rect = el.getBoundingClientRect();
-      const dotCenterX = rect.left + (rect.width / 2);
-      const dotCenterY = rect.top + (rect.height / 2);
       const isInsideCursor =
-        dotCenterX >= cursorRect.left &&
-        dotCenterX <= cursorRect.right &&
-        dotCenterY >= cursorRect.top &&
-        dotCenterY <= cursorRect.bottom;
+        rect.left >= cursorRect.left &&
+        rect.right <= cursorRect.right &&
+        rect.top >= cursorRect.top &&
+        rect.bottom <= cursorRect.bottom;
 
       if (isInsideCursor) {
-        nextHoveredDotKeys.add(dotKey);
+        const rowId = dotKey.split('-')[0];
+        Object.keys(dotRefs.current).forEach((candidateKey) => {
+          if (candidateKey.startsWith(`${rowId}-`)) {
+            nextHoveredDotKeys.add(candidateKey);
+          }
+        });
       }
     });
 
@@ -153,13 +158,6 @@ export default function SiteMapOverlay({
                       }}
                     >
                       <button
-                        ref={(el) => {
-                          if (el) {
-                            dotRefs.current[dotKey] = el;
-                          } else {
-                            delete dotRefs.current[dotKey];
-                          }
-                        }}
                         type="button"
                         aria-label={selected ? `Select item ${index + 1} in ${row.label || `row ${row.id + 1}`}` : `Scroll to ${row.label || `row ${row.id + 1}`}`}
                         onClick={() => onDotClick(row.id, index)}
@@ -172,6 +170,13 @@ export default function SiteMapOverlay({
                         }}
                       >
                         <span
+                          ref={(el) => {
+                            if (el) {
+                              dotRefs.current[dotKey] = el;
+                            } else {
+                              delete dotRefs.current[dotKey];
+                            }
+                          }}
                           className="absolute top-1/2 left-1/2 transition-colors"
                           style={{
                             width: `${DOT_SIZE}px`,
@@ -237,13 +242,6 @@ export default function SiteMapOverlay({
                       }}
                     >
                       <button
-                        ref={(el) => {
-                          if (el) {
-                            dotRefs.current[dotKey] = el;
-                          } else {
-                            delete dotRefs.current[dotKey];
-                          }
-                        }}
                         type="button"
                         aria-label={selected ? `Select item ${index + 1} in ${row.label || `row ${row.id + 1}`}` : `Scroll to ${row.label || `row ${row.id + 1}`}`}
                         onClick={() => onDotClick(row.id, index)}
@@ -256,6 +254,13 @@ export default function SiteMapOverlay({
                         }}
                       >
                         <span
+                          ref={(el) => {
+                            if (el) {
+                              dotRefs.current[dotKey] = el;
+                            } else {
+                              delete dotRefs.current[dotKey];
+                            }
+                          }}
                           className="absolute top-1/2 left-1/2 transition-colors"
                           style={{
                             width: `${DOT_SIZE}px`,
@@ -279,14 +284,12 @@ export default function SiteMapOverlay({
 
       {!selected && isHoveringOverlay && (
         <div
-          className="pointer-events-none fixed z-[70] rounded-[1px]"
+          className="pointer-events-none fixed z-[70] rounded-[1px] border border-black"
           style={{
             width: `${cursorDimensions.width}px`,
             height: `${cursorDimensions.height}px`,
             left: `${cursorPosition.x}px`,
             top: `${cursorPosition.y}px`,
-            outline: '2px solid black',
-            outlineOffset: '2px',
             transform: `translate(-50%, -50%) scale(${cursorScale})`,
             transformOrigin: 'center',
           }}
