@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const ImageCycler = ({ images, interval = 1000, height = 200, onSelect }) => {
+const ImageCycler = ({ images, interval = 1000, height = 200, onSelect, className = '' }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const ImageCycler = ({ images, interval = 1000, height = 200, onSelect }) => {
             sizes="100vw"
             priority
             onClick={() => onSelect?.(currentIndex)}
-            className="cursor-zoom-in"
+            className={`cursor-zoom-in ${className}`}
         />
     );
 };

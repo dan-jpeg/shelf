@@ -5,7 +5,7 @@
 
     // Custom row for [] - jxu archive scroll
     // Edit layout, sizing, spacing, etc. freely here
-    export default function JxuArchiveRow({ onSelect }) {
+    export default function JxuArchiveRow({ onSelect, shouldLoadVideos = true }) {
         const height = '310px';
 
         return (
@@ -19,6 +19,7 @@
                         loop
                         muted
                         playsInline
+                        shouldLoad={shouldLoadVideos}
                         onClick={() => onSelect?.(index)}
                         className="cursor-zoom-in -mx2"
                     />

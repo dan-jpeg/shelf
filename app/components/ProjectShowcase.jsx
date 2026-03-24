@@ -7,7 +7,7 @@ export default function ProjectShowcase({ title, titleClassName = '', className 
     >
       <div className="flex flex-col items-center">
         <p className={`mb-2 w-full text-center lg:text-left ${titleClassName}`}>{title}</p>
-        <div className="flex w-full flex-col items-center gap-4 lg:items-stretch lg:gap-0">
+        <div className="flex w-full flex-col items-center gap-4 lg:items-stretch lg:gap-2">
           {children}
         </div>
       </div>

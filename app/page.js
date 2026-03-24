@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import ImageRow from "./components/ImageRow";
 import { isVideoEntry, entryKey, VideoPlayer } from "./components/ImageRow";
@@ -41,31 +41,33 @@ import {
 } from "@/app/urls";
 
 const baseRows = [
-    { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200 },
-    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', labelClassName: ' xs:translate-y-4  sm:translate-y-3 ' },
-    { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid', 'home page image cycle'],  labelClassName: 'pt-0'  },
+    { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200, descriptions: ['3 item catalog spread',' one-cut dress catalog spread', 'two item catalog spread'], },
+    { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', descriptions: ['archive scroll','mobile home page'], labelClassName: ' xs:translate-y-4  sm:translate-y-3 ' },
+    { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid'],  labelClassName: 'pt-0'  },
     { label: '[] - roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
     { label: '[] - grand cord (web)', urls: grandcordurls1, height: 200, margins: ['','border-[0.5]'], descriptions: ['editorial page','cart for large screens'] },
-    { label: '[] - event art direction ', urls: majorMoves1, height: 310 },
-    { label: '', urls: majorMovesRoundedStory, height: 210 },
+    { label: '[] - event art direction ', urls: majorMoves1, height: 310, descriptions: ['poster design for social media']},
+    { label: '', urls: majorMovesRoundedStory, height: 210, descriptions: ['instagram / social story (1)','instagram / social story (2)', 'instagram / social story (3)'] },
 
 
 
-    { label: '[] - talented brand identity / deck', urls: talentedDemo, height: 310 },
-    { label: '', urls: talentedSlides1, height: 200, cycler: true },
+    { label: '[] - talented brand identity / deck', urls: talentedDemo, height: 310, descriptions: ['talented brand identity'] },
+    { label: '', urls: talentedSlides1, height: 200, cycler: true,  descriptions: ['talented brand identity / deck'] },
     { label: '[]-  placeholder.nyc e-commerce design', urls: urlsprojecta, height: 310, descriptions: ['product display page','product display page', 'menu / navigation'] },
-    { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, labelClassName: 'translate-y-10' },
+    { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, labelClassName: 'translate-y-10',  descriptions: 'works page scroll view' },
     { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery'] },
-    { label: '[] - event promotion', urls: posterurls, height: 410 },
-    { label: '[] - union splash', urls: urlsrow1, height: 200 },
-    { label: '[] -  event promotion', urls: posterurls2, height: 240 },
-    { label: '[] -  clock ', urls: clockUrl, height: 100 },
+    { label: '[] - event promotion', urls: posterurls, height: 410,  descriptions: ['poster-design'] },
+    { label: '[] - union splash', urls: urlsrow1, height: 200,  descriptions: ['union splash screen'] },
+    { label: '[] -  event promotion', urls: posterurls2, height: 240,  descriptions: ['talented brand identity / deck'] },
+    { label: '[] -  clock ', urls: clockUrl, height: 100, descriptions: ['readable clock in which only one or two numbers is visible at a time'] },
 
 
     // { label: '[] grand-cord additional', urls: grandcordurls2, height: 500, descriptions: ['product display page, minimal, desktop', 'product display concept', 'product display concept'], margins: ['border-[1]','','border-[0.5]'] },
 ];
 
 const rows = baseRows.map((row, index) => ({ ...row, id: index }));
+const MOBILE_MODAL_PRELOAD_BEHIND = 1;
+const MOBILE_MODAL_PRELOAD_AHEAD = 3;
 
 const showcases = rows.reduce((groups, row) => {
     const hasTitle = row.label.trim().length > 0;
@@ -88,34 +90,89 @@ export default function Home() {
     const [selected, setSelected] = useState(null); // { rowIndex, mediaIndex }
     const [activeKey, setActiveKey] = useState(null);
     const [visibleRowIds, setVisibleRowIds] = useState(() => new Set());
+    const [isMobile, setIsMobile] = useState(false);
+    const [maxUnlockedRowId, setMaxUnlockedRowId] = useState(0);
     const rowRefs = useRef([]);
     const scrollContainerRef = useRef(null);
+    const mobilePagerRef = useRef(null);
+
+    const clampMediaIndex = useCallback((rowIndex, mediaIndex) => {
+        const row = rows[rowIndex];
+        return ((mediaIndex % row.urls.length) + row.urls.length) % row.urls.length;
+    }, []);
+
+    const moveSelection = useCallback((direction) => {
+        setSelected((currentSelected) => {
+            if (!currentSelected) return currentSelected;
+
+            const { rowIndex, mediaIndex } = currentSelected;
+
+            if (direction === 'right') {
+                return { rowIndex, mediaIndex: clampMediaIndex(rowIndex, mediaIndex + 1) };
+            }
+
+            if (direction === 'left') {
+                return { rowIndex, mediaIndex: clampMediaIndex(rowIndex, mediaIndex - 1) };
+            }
+
+            if (direction === 'up') {
+                if (rowIndex === 0) return currentSelected;
+                const nextRowIndex = rowIndex - 1;
+                return {
+                    rowIndex: nextRowIndex,
+                    mediaIndex: clampMediaIndex(nextRowIndex, mediaIndex),
+                };
+            }
+
+            if (direction === 'down') {
+                if (rowIndex === rows.length - 1) return currentSelected;
+                const nextRowIndex = rowIndex + 1;
+                return {
+                    rowIndex: nextRowIndex,
+                    mediaIndex: clampMediaIndex(nextRowIndex, mediaIndex),
+                };
+            }
+
+            return currentSelected;
+        });
+    }, [clampMediaIndex]);
+
+    const flashActiveKey = useCallback((direction) => {
+        setActiveKey(direction);
+        setTimeout(() => setActiveKey(null), 300);
+    }, []);
+
+    const clearSelection = useCallback(() => {
+        setSelected(null);
+    }, []);
+
+    const navigateSelection = useCallback((direction) => {
+        flashActiveKey(direction);
+        moveSelection(direction);
+    }, [flashActiveKey, moveSelection]);
+
+    useEffect(() => {
+        const mql = window.matchMedia('(max-width: 1023px)');
+        const update = (event) => setIsMobile(event.matches);
+        update(mql);
+        mql.addEventListener('change', update);
+        return () => mql.removeEventListener('change', update);
+    }, []);
 
     useEffect(() => {
         if (!selected) return;
-        const { rowIndex, mediaIndex } = selected;
-        const row = rows[rowIndex];
+
         const handleKey = (e) => {
             const dir = { ArrowRight: 'right', ArrowLeft: 'left', ArrowUp: 'up', ArrowDown: 'down', d: 'right', a: 'left', w: 'up', s: 'down' }[e.key];
             if (dir) {
-                setActiveKey(dir);
-                setTimeout(() => setActiveKey(null), 300);
-            }
-            if (e.key === 'ArrowRight' || e.key === 'd') {
-                setSelected({ rowIndex, mediaIndex: (mediaIndex + 1) % row.urls.length });
-            } else if (e.key === 'ArrowLeft' || e.key === 'a') {
-                setSelected({ rowIndex, mediaIndex: (mediaIndex - 1 + row.urls.length) % row.urls.length });
-            } else if (e.key === 'ArrowUp' || e.key === 'w') {
-                setSelected({ rowIndex: (rowIndex - 1 + rows.length) % rows.length, mediaIndex: 0 });
-            } else if (e.key === 'ArrowDown' || e.key === 's') {
-                setSelected({ rowIndex: (rowIndex + 1) % rows.length, mediaIndex: 0 });
+                navigateSelection(dir);
             } else if (e.key === 'Escape') {
-                setSelected(null);
+                clearSelection();
             }
         };
         window.addEventListener('keydown', handleKey);
         return () => window.removeEventListener('keydown', handleKey);
-    }, [selected]);
+    }, [clearSelection, navigateSelection, selected]);
 
     useEffect(() => {
         if (!selected) return;
@@ -127,7 +184,7 @@ export default function Home() {
             const containerHeight = container.clientHeight;
             container.scrollTo({ top: elTop - (containerHeight / 2) + (elHeight / 2), behavior: 'smooth' });
         }
-    }, [selected?.rowIndex]);
+    }, [selected]);
 
     useEffect(() => {
         const container = scrollContainerRef.current;
@@ -151,6 +208,16 @@ export default function Home() {
 
                     return next;
                 });
+
+                const intersectingRowIds = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .map((entry) => Number(entry.target.dataset.rowId))
+                    .filter((rowId) => !Number.isNaN(rowId));
+
+                if (intersectingRowIds.length > 0) {
+                    const highestVisibleRowId = Math.max(...intersectingRowIds);
+                    setMaxUnlockedRowId((current) => Math.max(current, highestVisibleRowId + 1));
+                }
             },
             {
                 root: container,
@@ -170,10 +237,78 @@ export default function Home() {
     const selectedRow = selected ? rows[selected.rowIndex] : null;
     const selectedEntry = selectedRow ? selectedRow.urls[selected.mediaIndex] : null;
     const selectedDescription = selectedRow?.descriptions?.[selected?.mediaIndex];
+    const isBottomRow = selected ? selected.rowIndex === rows.length - 1 : false;
+
+    const mobilePages = rows.flatMap((row) => {
+        if (row.cycler) {
+            return [{
+                rowIndex: row.id,
+                mediaIndex: 0,
+                description: row.descriptions?.[0] || '',
+                cycler: true,
+                urls: row.urls,
+                height: row.height,
+            }];
+        }
+
+        return row.urls.map((entry, mediaIndex) => ({
+            rowIndex: row.id,
+            mediaIndex,
+            entry,
+            description: row.descriptions?.[mediaIndex] || '',
+            cycler: false,
+        }));
+    });
+
+    const selectedMobilePageIndex = selected
+        ? mobilePages.findIndex((item) =>
+            item.rowIndex === selected.rowIndex && (item.cycler || item.mediaIndex === selected.mediaIndex)
+        )
+        : -1;
+    const showReturnToTop = selectedMobilePageIndex === mobilePages.length - 1;
+    const shouldPreloadMobilePage = (pageIndex) => (
+        selectedMobilePageIndex >= 0 &&
+        pageIndex >= selectedMobilePageIndex - MOBILE_MODAL_PRELOAD_BEHIND &&
+        pageIndex <= selectedMobilePageIndex + MOBILE_MODAL_PRELOAD_AHEAD
+    );
+
+    const handleReturnToTop = () => {
+        setSelected({ rowIndex: 0, mediaIndex: 0 });
+    };
+
+    const handleMobilePagerScroll = (e) => {
+        if (!selected || !isMobile) return;
+
+        const pageWidth = e.currentTarget.clientWidth;
+        if (!pageWidth) return;
+
+        const nextIndex = Math.round(e.currentTarget.scrollLeft / pageWidth);
+        const nextPage = mobilePages[nextIndex];
+        if (!nextPage) return;
+
+        if (nextPage.rowIndex !== selected.rowIndex || nextPage.mediaIndex !== selected.mediaIndex) {
+            setSelected({ rowIndex: nextPage.rowIndex, mediaIndex: nextPage.mediaIndex });
+        }
+    };
+
+    useEffect(() => {
+        if (!isMobile || !selected || selectedMobilePageIndex < 0) return;
+
+        const pager = mobilePagerRef.current;
+        if (!pager) return;
+
+        const pageWidth = pager.clientWidth;
+        pager.scrollTo({
+            left: pageWidth * selectedMobilePageIndex,
+            behavior: 'auto',
+        });
+    }, [isMobile, mobilePages.length, selected, selectedMobilePageIndex]);
 
     const renderRow = (row) => {
+        const shouldLoadVideos = row.id <= maxUnlockedRowId;
+
         if (row.custom === 'jxu-archive') {
-            return <JxuArchiveRow onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })} />;
+            return <JxuArchiveRow shouldLoadVideos={shouldLoadVideos} onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })} />;
         }
 
         if (row.cycler) {
@@ -192,6 +327,7 @@ export default function Home() {
                 urls={row.urls}
                 height={row.height}
                 margins={row.margins}
+                shouldLoadVideos={shouldLoadVideos}
                 onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
             />
         );
@@ -268,59 +404,126 @@ export default function Home() {
 
             {selected && selectedEntry && (
                 <div
-                    className="fixed inset-0 flex items-center justify-center z-50"
+                    className="fixed inset-0 z-50 flex items-center justify-center"
                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
-                    onClick={() => setSelected(null)}
+                    onClick={clearSelection}
                 >
-                    <div
-                        className="flex flex-col items-center gap-2"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {isVideoEntry(selectedEntry) ? (
-                            <VideoPlayer
-                                entry={selectedEntry}
-                                className="h-[60vh] w-auto"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                            />
-                        ) : (
-                            <Image
-                                key={`${selected.rowIndex}-${selected.mediaIndex}`}
-                                src={selectedEntry}
-                                alt=""
-                                className="h-auto w-[80vw] md:h-[60vh] md:w-auto"
-                                width={0}
-                                height={0}
-                                sizes="100vw"
-                            />
-                        )}
-
-                        {selectedDescription && (
-                            <p className="text-[10pt]">{selectedDescription}</p>
-                        )}
-                    </div>
-
-                    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex gap-6 text-[10pt] select-none pointer-events-none" onClick={e => e.stopPropagation()}>
-                        {[
-                            { dir: 'left',  labels: ['<', 'a'] },
-                            { dir: 'up',    labels: ['^', 'w'] },
-                            { dir: 'down',  labels: ['v', 's'] },
-                            { dir: 'right', labels: ['>', 'd'] },
-                        ].map(({ dir, labels }) => (
-                            <span
-                                key={dir}
-                                style={{
-                                    color: activeKey === dir ? '#000' : '#ccc',
-                                    opacity: activeKey && activeKey !== dir ? 0 : 1,
-                                    transition: 'color 0.15s, opacity 0.15s',
-                                }}
+                    {isMobile ? (
+                        <div className="flex h-full w-full flex-col justify-end" onClick={e => e.stopPropagation()}>
+                            <div
+                                ref={mobilePagerRef}
+                                className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scrollbar-hide"
+                                onScroll={handleMobilePagerScroll}
                             >
-                                {labels.join('/')}
-                            </span>
-                        ))}
-                    </div>
+                                {mobilePages.map((page, pageIndex) => (
+                                    <div
+                                        key={`${page.rowIndex}-${page.mediaIndex}`}
+                                        className="flex h-full min-w-full snap-center flex-col items-start justify-end gap-2 px-[22px] pb-[22px]"
+                                    >
+                                        {page.cycler ? (
+                                            <ImageCycler
+                                                images={page.urls}
+                                                interval={1000}
+                                                height="72vh"
+                                                onSelect={clearSelection}
+                                                className="w-auto max-w-[calc(100vw-44px)] object-contain"
+                                            />
+                                        ) : isVideoEntry(page.entry) ? (
+                                            <VideoPlayer
+                                                entry={page.entry}
+                                                className="h-[72vh] w-auto max-w-[calc(100vw-44px)] object-contain"
+                                                autoPlay
+                                                loop
+                                                muted
+                                                playsInline
+                                                shouldLoad={shouldPreloadMobilePage(pageIndex)}
+                                                onClick={clearSelection}
+                                            />
+                                        ) : (
+                                            <Image
+                                                src={page.entry}
+                                                alt=""
+                                                className="h-[72vh] w-auto max-w-[calc(100vw-44px)] object-contain"
+                                                width={0}
+                                                height={0}
+                                                sizes="100vw"
+                                                onClick={clearSelection}
+                                            />
+                                        )}
+
+                                        {page.description && (
+                                            <p className="text-[10pt]">{page.description}</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {showReturnToTop && (
+                                <button
+                                    type="button"
+                                    className="mt-3 self-center text-[8.5pt]"
+                                    onClick={handleReturnToTop}
+                                >
+                                    return to top
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <div
+                            className="flex flex-col items-center gap-2"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {isVideoEntry(selectedEntry) ? (
+                                <VideoPlayer
+                                    entry={selectedEntry}
+                                    className="h-[60vh] w-auto"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    shouldLoad
+                                    onClick={clearSelection}
+                                />
+                            ) : (
+                                <Image
+                                    key={`${selected.rowIndex}-${selected.mediaIndex}`}
+                                    src={selectedEntry}
+                                    alt=""
+                                    className="h-auto w-[80vw] md:h-[60vh] md:w-auto"
+                                    width={0}
+                                    height={0}
+                                    sizes="100vw"
+                                    onClick={clearSelection}
+                                />
+                            )}
+
+                            {selectedDescription && (
+                                <p className="text-[10pt]">{selectedDescription}</p>
+                            )}
+                        </div>
+                    )}
+
+                    {!isMobile && (
+                        <div className="fixed bottom-6 left-1/2 flex -translate-x-1/2 gap-6 text-[10pt] select-none pointer-events-none" onClick={e => e.stopPropagation()}>
+                            {[
+                                { dir: 'left',  labels: ['<', 'a'] },
+                                { dir: 'up',    labels: ['^', 'w'] },
+                                { dir: 'down',  labels: ['v', 's'] },
+                                { dir: 'right', labels: ['>', 'd'] },
+                            ].map(({ dir, labels }) => (
+                                <span
+                                    key={dir}
+                                    style={{
+                                        color: activeKey === dir ? '#000' : '#ccc',
+                                        opacity: activeKey && activeKey !== dir ? 0 : 1,
+                                        transition: 'color 0.15s, opacity 0.15s',
+                                    }}
+                                >
+                                    {labels.join('/')}
+                                </span>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

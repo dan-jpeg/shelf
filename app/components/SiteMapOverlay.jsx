@@ -5,25 +5,25 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 const DOT_SIZE = 7;
 const DOT_HIT_SIZE = 16;
 const DOT_LEFT_HIT_EXTENSION = 20;
-const HIGHLIGHT_RED = '#F90000';
+const HIGHLIGHT_RED = '#000000';
 const CURSOR_MAX_EDGE = 54;
 const MODAL_ROW_GRAY = '#9a9a9a';
 
 const desktopPresets = {
   bottomCenter: {
-    className: 'lg:bottom-6 lg:left-1/2 lg:right-auto lg:-translate-x-1/2',
+    className: 'min-[700px]:bottom-6 min-[700px]:left-1/2 min-[700px]:right-auto min-[700px]:-translate-x-1/2',
     orientation: 'horizontal',
   },
   rightCenterInset: {
-    className: 'lg:top-1/2 lg:bottom-auto lg:right-[120px] lg:translate-y-[-50%]',
+    className: 'min-[700px]:top-1/2 min-[700px]:bottom-auto min-[700px]:right-[120px] min-[700px]:translate-y-[-50%]',
     orientation: 'horizontal',
   },
   rightTopSmall: {
-    className: 'lg:top-2 lg:bottom-auto lg:left-auto lg:right-3 lg:origin-top-right lg:scale-[0.6]',
+    className: 'min-[700px]:top-2 min-[700px]:bottom-auto min-[700px]:left-auto min-[700px]:right-3 min-[700px]:origin-top-right min-[700px]:scale-[0.6]',
     orientation: 'horizontal',
   },
   underRightHeader: {
-    className: 'top-[16px] bottom-auto left-auto right-[24px] origin-top-right scale-[0.6]',
+    className: 'top-[22px] bottom-auto left-auto right-4 origin-top-right scale-[0.6]',
     orientation: 'vertical',
   },
 };
@@ -35,11 +35,16 @@ export default function SiteMapOverlay({
   selected,
   desktopPosition = 'bottomCenter',
 }) {
-  const [hoveredDotKeys, setHoveredDotKeys] = useState(() => new Set());
+  const [hoveredRowIds, setHoveredRowIds] = useState(() => new Set());
   const [isHoveringOverlay, setIsHoveringOverlay] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchCursorVisible, setIsTouchCursorVisible] = useState(false);
+  const [isTouchCursorFading, setIsTouchCursorFading] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [viewportSize, setViewportSize] = useState({ width: 1, height: 1 });
   const dotRefs = useRef({});
+  const touchCursorTimeoutRef = useRef(null);
+  const touchCursorFadeTimeoutRef = useRef(null);
 
   useEffect(() => {
     const updateViewportSize = () => {
@@ -49,9 +54,29 @@ export default function SiteMapOverlay({
       });
     };
 
+    const touchMql = window.matchMedia('(hover: none) and (pointer: coarse)');
+    const updateTouchDevice = (event) => {
+      setIsTouchDevice(event.matches);
+    };
+
     updateViewportSize();
+    updateTouchDevice(touchMql);
     window.addEventListener('resize', updateViewportSize);
-    return () => window.removeEventListener('resize', updateViewportSize);
+    touchMql.addEventListener('change', updateTouchDevice);
+
+    return () => {
+      window.removeEventListener('resize', updateViewportSize);
+      touchMql.removeEventListener('change', updateTouchDevice);
+    };
+  }, []);
+
+  useEffect(() => () => {
+    if (touchCursorTimeoutRef.current) {
+      clearTimeout(touchCursorTimeoutRef.current);
+    }
+    if (touchCursorFadeTimeoutRef.current) {
+      clearTimeout(touchCursorFadeTimeoutRef.current);
+    }
   }, []);
 
   const cursorDimensions = useMemo(() => {
@@ -74,35 +99,77 @@ export default function SiteMapOverlay({
       bottom: nextCursorPosition.y + (scaledCursorHeight / 2),
     };
 
-    const nextHoveredDotKeys = new Set();
+    const nextHoveredRowIds = new Set();
 
     Object.entries(dotRefs.current).forEach(([dotKey, el]) => {
       if (!el) return;
 
       const rect = el.getBoundingClientRect();
-      const isInsideCursor =
-        rect.left >= cursorRect.left &&
-        rect.right <= cursorRect.right &&
-        rect.top >= cursorRect.top &&
-        rect.bottom <= cursorRect.bottom;
+      const intersectsCursor =
+        rect.right >= cursorRect.left &&
+        rect.left <= cursorRect.right &&
+        rect.bottom >= cursorRect.top &&
+        rect.top <= cursorRect.bottom;
 
-      if (isInsideCursor) {
-        const rowId = dotKey.split('-')[0];
-        Object.keys(dotRefs.current).forEach((candidateKey) => {
-          if (candidateKey.startsWith(`${rowId}-`)) {
-            nextHoveredDotKeys.add(candidateKey);
-          }
-        });
+      if (intersectsCursor) {
+        nextHoveredRowIds.add(Number(dotKey.split('-')[0]));
       }
     });
 
-    setHoveredDotKeys(nextHoveredDotKeys);
+    setHoveredRowIds(nextHoveredRowIds);
   };
 
   const desktopPreset = desktopPresets[desktopPosition] || desktopPresets.bottomCenter;
   const desktopRows = desktopPreset.orientation === 'horizontal' ? [...rows].reverse() : rows;
   const desktopPositionClass = desktopPreset.className;
   const cursorScale = desktopPosition === 'rightTopSmall' || desktopPosition === 'underRightHeader' ? 0.6 : 1;
+  const effectiveVisibleRowIds = visibleRowIds;
+  const visibleRowIndexSet = new Set(Array.from(effectiveVisibleRowIds));
+  const showCursor = !selected && (isHoveringOverlay || isTouchCursorVisible || isTouchCursorFading);
+
+  const scheduleTouchCursorClear = () => {
+    if (touchCursorTimeoutRef.current) {
+      clearTimeout(touchCursorTimeoutRef.current);
+    }
+    if (touchCursorFadeTimeoutRef.current) {
+      clearTimeout(touchCursorFadeTimeoutRef.current);
+    }
+
+    touchCursorTimeoutRef.current = setTimeout(() => {
+      setIsTouchCursorVisible(false);
+      setIsTouchCursorFading(true);
+      touchCursorFadeTimeoutRef.current = setTimeout(() => {
+        setIsTouchCursorFading(false);
+        setHoveredRowIds(new Set());
+      }, 300);
+    }, 1000);
+  };
+
+  const activateTouchCursor = (touch) => {
+    const nextCursorPosition = { x: touch.clientX, y: touch.clientY };
+    setCursorPosition(nextCursorPosition);
+    updateHoveredDots(nextCursorPosition);
+    setIsTouchCursorVisible(true);
+    setIsTouchCursorFading(false);
+    scheduleTouchCursorClear();
+  };
+
+  const getInactiveOpacity = (rowId) => {
+    if (visibleRowIndexSet.size === 0) return 1;
+    if (visibleRowIndexSet.has(rowId)) return 1;
+
+    let nearestDistance = Infinity;
+
+    visibleRowIndexSet.forEach((visibleRowId) => {
+      nearestDistance = Math.min(nearestDistance, Math.abs(visibleRowId - rowId));
+    });
+
+    if (nearestDistance <= 1) return 0.6;
+    if (nearestDistance === 2) return 0.4;
+    if (nearestDistance === 3) return 0.35;
+    if (nearestDistance === 4) return 0.3;
+    return 0.2;
+  };
 
   return (
     <>
@@ -111,7 +178,7 @@ export default function SiteMapOverlay({
         onMouseEnter={() => setIsHoveringOverlay(true)}
         onMouseLeave={() => {
           setIsHoveringOverlay(false);
-          setHoveredDotKeys(new Set());
+          setHoveredRowIds(new Set());
         }}
         onMouseMove={(event) => {
           if (selected) return;
@@ -119,17 +186,29 @@ export default function SiteMapOverlay({
           setCursorPosition(nextCursorPosition);
           updateHoveredDots(nextCursorPosition);
         }}
+        onTouchStart={(event) => {
+          if (selected || !isTouchDevice) return;
+          const touch = event.touches[0];
+          if (!touch) return;
+          activateTouchCursor(touch);
+        }}
+        onTouchMove={(event) => {
+          if (selected || !isTouchDevice) return;
+          const touch = event.touches[0];
+          if (!touch) return;
+          activateTouchCursor(touch);
+        }}
       >
-        <div className="flex flex-col items-end gap-0 lg:hidden">
+        <div className="flex flex-col items-end gap-0 min-[700px]:hidden">
           {rows.map((row) => {
             const itemCount = row.cycler ? 1 : row.urls.length;
-            const isActive = visibleRowIds.has(row.id);
+            const isActive = effectiveVisibleRowIds.has(row.id);
 
             return (
               <div key={row.id} className="flex items-center justify-end gap-0.5">
                 {Array.from({ length: itemCount }).map((_, index) => {
                   const dotKey = `${row.id}-${index}`;
-                  const isHovered = hoveredDotKeys.has(dotKey);
+                  const isHovered = hoveredRowIds.has(row.id);
                   const isSelectedRow = selected?.rowIndex === row.id;
                   const selectedDotIndex = row.cycler ? 0 : selected?.mediaIndex;
                   const isSelectedDot = isSelectedRow && selectedDotIndex === index;
@@ -140,13 +219,15 @@ export default function SiteMapOverlay({
                     : isHovered
                       ? HIGHLIGHT_RED
                       : isActive
-                        ? '#000'
-                        : '#d4d4d4';
+                        ? HIGHLIGHT_RED
+                        : '#000';
                   const fillOpacity = selected
                     ? isSelectedRow
                       ? 1
                       : 0.6
-                    : 1;
+                    : isActive || isHovered
+                      ? 1
+                      : getInactiveOpacity(row.id);
 
                   return (
                     <div
@@ -177,7 +258,7 @@ export default function SiteMapOverlay({
                               delete dotRefs.current[dotKey];
                             }
                           }}
-                          className="absolute top-1/2 left-1/2 transition-colors"
+                          className="absolute top-1/2 left-1/2"
                           style={{
                             width: `${DOT_SIZE}px`,
                             height: `${DOT_SIZE}px`,
@@ -197,23 +278,23 @@ export default function SiteMapOverlay({
           })}
         </div>
 
-        <div className={`hidden lg:flex ${desktopPreset.orientation === 'vertical' ? 'lg:flex-col lg:items-end lg:gap-0' : 'lg:flex-row lg:items-end lg:gap-px'}`}>
+        <div className={`hidden min-[700px]:flex ${desktopPreset.orientation === 'vertical' ? 'min-[700px]:flex-col min-[700px]:items-end min-[700px]:gap-0' : 'min-[700px]:flex-row min-[700px]:items-end min-[700px]:gap-px'}`}>
           {desktopRows.map((row) => {
             const itemCount = row.cycler ? 1 : row.urls.length;
-            const isActive = visibleRowIds.has(row.id);
+            const isActive = effectiveVisibleRowIds.has(row.id);
 
             return (
               <div
                 key={row.id}
                 className={`flex items-center justify-center gap-0.5 ${
                   desktopPreset.orientation === 'vertical'
-                    ? 'lg:flex-row lg:justify-end'
-                    : 'lg:flex-col lg:justify-end lg:gap-0'
+                    ? 'min-[700px]:flex-row min-[700px]:justify-end'
+                    : 'min-[700px]:flex-col min-[700px]:justify-end min-[700px]:gap-0'
                 }`}
               >
                 {Array.from({ length: itemCount }).map((_, index) => {
                   const dotKey = `${row.id}-${index}`;
-                  const isHovered = hoveredDotKeys.has(dotKey);
+                  const isHovered = hoveredRowIds.has(row.id);
                   const isSelectedRow = selected?.rowIndex === row.id;
                   const selectedDotIndex = row.cycler ? 0 : selected?.mediaIndex;
                   const isSelectedDot = isSelectedRow && selectedDotIndex === index;
@@ -224,13 +305,15 @@ export default function SiteMapOverlay({
                     : isHovered
                       ? HIGHLIGHT_RED
                       : isActive
-                        ? '#000'
-                        : '#d4d4d4';
+                        ? HIGHLIGHT_RED
+                        : '#000';
                   const fillOpacity = selected
                     ? isSelectedRow
                       ? 1
                       : 0.6
-                    : 1;
+                    : isActive || isHovered
+                      ? 1
+                      : getInactiveOpacity(row.id);
 
                   return (
                     <div
@@ -261,7 +344,7 @@ export default function SiteMapOverlay({
                               delete dotRefs.current[dotKey];
                             }
                           }}
-                          className="absolute top-1/2 left-1/2 transition-colors"
+                          className="absolute top-1/2 left-1/2"
                           style={{
                             width: `${DOT_SIZE}px`,
                             height: `${DOT_SIZE}px`,
@@ -282,9 +365,9 @@ export default function SiteMapOverlay({
         </div>
       </div>
 
-      {!selected && isHoveringOverlay && (
+      {showCursor && (
         <div
-          className="pointer-events-none fixed z-[70] rounded-[1px] border border-black"
+          className="pointer-events-none fixed z-[70] rounded-[1px] border border-black transition-opacity duration-300"
           style={{
             width: `${cursorDimensions.width}px`,
             height: `${cursorDimensions.height}px`,
@@ -292,6 +375,7 @@ export default function SiteMapOverlay({
             top: `${cursorPosition.y}px`,
             transform: `translate(-50%, -50%) scale(${cursorScale})`,
             transformOrigin: 'center',
+            opacity: isTouchDevice ? (isTouchCursorVisible ? 1 : 0) : (isHoveringOverlay ? 1 : 0),
           }}
         />
       )}

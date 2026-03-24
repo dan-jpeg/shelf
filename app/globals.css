@@ -46,3 +46,74 @@ body {
   --breakpoint-sm: 500px;
   --breakpoint-md: 768px;
 }
+
+.selected-media-shell {
+  will-change: transform, opacity;
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.selected-media-shell--left {
+  animation-name: selected-media-swipe-left;
+}
+
+.selected-media-shell--right {
+  animation-name: selected-media-swipe-right;
+}
+
+.selected-media-shell--up {
+  animation-name: selected-media-swipe-up;
+}
+
+.selected-media-shell--down {
+  animation-name: selected-media-swipe-down;
+}
+
+@keyframes selected-media-swipe-left {
+  from {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes selected-media-swipe-right {
+  from {
+    opacity: 0;
+    transform: translate3d(-28px, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes selected-media-swipe-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes selected-media-swipe-down {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -28px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
