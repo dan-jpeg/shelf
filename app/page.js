@@ -409,16 +409,16 @@ export default function Home() {
                     onClick={clearSelection}
                 >
                     {isMobile ? (
-                        <div className="flex h-full w-full flex-col justify-end" onClick={e => e.stopPropagation()}>
+                        <div className="flex h-full w-full flex-col justify-center" onClick={e => e.stopPropagation()}>
                             <div
                                 ref={mobilePagerRef}
-                                className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scrollbar-hide"
+                                className="flex w-full snap-x snap-mandatory overflow-x-auto scrollbar-hide"
                                 onScroll={handleMobilePagerScroll}
                             >
                                 {mobilePages.map((page, pageIndex) => (
                                     <div
                                         key={`${page.rowIndex}-${page.mediaIndex}`}
-                                        className="flex h-full min-w-full snap-center flex-col items-start justify-end gap-2 px-[22px] pb-[22px]"
+                                        className="flex h-full min-w-full snap-center flex-col items-center justify-center gap-2 px-4"
                                     >
                                         {page.cycler ? (
                                             <ImageCycler
@@ -426,12 +426,12 @@ export default function Home() {
                                                 interval={1000}
                                                 height="72vh"
                                                 onSelect={clearSelection}
-                                                className="w-auto max-w-[calc(100vw-44px)] object-contain"
+                                                className="w-[94vw] object-contain"
                                             />
                                         ) : isVideoEntry(page.entry) ? (
                                             <VideoPlayer
                                                 entry={page.entry}
-                                                className="h-[72vh] w-auto max-w-[calc(100vw-44px)] object-contain"
+                                                className="h-[72vh] w-[94vw] object-contain"
                                                 autoPlay
                                                 loop
                                                 muted
@@ -443,7 +443,7 @@ export default function Home() {
                                             <Image
                                                 src={page.entry}
                                                 alt=""
-                                                className="h-[72vh] w-auto max-w-[calc(100vw-44px)] object-contain"
+                                                className="h-[72vh] w-[94vw] object-contain"
                                                 width={0}
                                                 height={0}
                                                 sizes="100vw"
