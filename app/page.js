@@ -94,7 +94,6 @@ export default function Home() {
     const [isMobile, setIsMobile] = useState(false);
     const [maxUnlockedRowId, setMaxUnlockedRowId] = useState(0);
     const [isNearBottom, setIsNearBottom] = useState(false);
-    const [pageFlashKey, setPageFlashKey] = useState(0);
     const rowRefs = useRef([]);
     const scrollContainerRef = useRef(null);
     const mobilePagerRef = useRef(null);
@@ -311,8 +310,6 @@ export default function Home() {
     };
 
     const handleScrollToTop = useCallback(() => {
-        setPageFlashKey((current) => current + 1);
-
         const container = scrollContainerRef.current;
         if (!container) return;
 
@@ -454,10 +451,6 @@ export default function Home() {
 
     return (
         <div ref={scrollContainerRef} className="flex h-screen w-screen snap-y snap-mandatory flex-col overflow-y-auto px-2 font-mono text-[8.5pt] scrollbar-hide lg:snap-none">
-            <div
-                key={`page-flash-${pageFlashKey}`}
-                className={`${pageFlashKey > 0 ? 'page-flash-grey ' : ''}pointer-events-none fixed inset-0 z-[40]`}
-            />
             <video
                 src="https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/common-design-spinner.MOV?alt=media&token=b62f41cc-fb22-4ecd-a0bb-c04b24f9e66a"
                 autoPlay
