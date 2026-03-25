@@ -41,7 +41,7 @@ import {
 } from "@/app/urls";
 
 const baseRows = [
-    { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200, descriptions: ['3 item catalog spread',' one-cut dress catalog spread', 'two item catalog spread'], },
+    { label: '[] - grand cord (print)', urls: urlsgrandcordprint, height: 200, descriptions: ['２ item catalog spread', '３　item catalog spread', 'one-cut dress catalog spread', '2 item catalog spread'], },
     { label: '[] - jxu archive scroll', urls: jxuArchiveVideo, height: 310, custom: 'jxu-archive', className: 'pt-4 pb-10', descriptions: ['archive scroll','mobile home page'], labelClassName: ' xs:translate-y-4  sm:translate-y-3 ' },
     { label: '[] - jing yi artist portfolio', urls: jingyiurls, height: 200, margins: ['','mx-2'], descriptions: ['archive view | home/splash page','archive grid'],  labelClassName: 'pt-0'  },
     { label: '[] - roo product display pages', urls: roourls1, height: 310, descriptions: ['product display page a','product display page a2', 'drawer menu', 'collection view'] },
