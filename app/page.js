@@ -57,7 +57,7 @@ const baseRows = [
     { label: '[] - edie xu artist portfolio', urls: ediehomescreenBig, height: 310, labelClassName: 'translate-y-10',  descriptions: 'works page scroll view' },
     { label: '', urls: ediehomescreen, height: 200, margins: ['border-[1]'], descriptions: ['splash page scroll interaction','mobile exhibition view layout', 'exhibition photo gallery'] },
     { label: '[] - event promotion', urls: posterurls, height: 410,  descriptions: ['poster-design'] },
-    { label: '[] - union splash', urls: urlsrow1, height: 200,  descriptions: ['union splash screen'] },
+    { label: '[] - union splash', urls:  urlsrow1, height: 200,  descriptions: ['union splash screen'] },
     { label: '[] -  event promotion', urls: posterurls2, height: 240,  descriptions: ['talented brand identity / deck'] },
     { label: '[] -  clock ', urls: clockUrl, height: 100, descriptions: ['readable clock in which only one or two numbers is visible at a time'] },
 
@@ -68,6 +68,7 @@ const baseRows = [
 const rows = baseRows.map((row, index) => ({ ...row, id: index }));
 const MOBILE_MODAL_PRELOAD_BEHIND = 1;
 const MOBILE_MODAL_PRELOAD_AHEAD = 3;
+const FOOTER_ROW_ID = rows.length;
 
 const showcases = rows.reduce((groups, row) => {
     const hasTitle = row.label.trim().length > 0;
@@ -92,9 +93,18 @@ export default function Home() {
     const [visibleRowIds, setVisibleRowIds] = useState(() => new Set());
     const [isMobile, setIsMobile] = useState(false);
     const [maxUnlockedRowId, setMaxUnlockedRowId] = useState(0);
+    const [isNearBottom, setIsNearBottom] = useState(false);
+    const [pageFlashKey, setPageFlashKey] = useState(0);
     const rowRefs = useRef([]);
     const scrollContainerRef = useRef(null);
     const mobilePagerRef = useRef(null);
+    const footerRef = useRef(null);
+    const triangleCursor = 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><path d="M5 1L9 8H1Z" fill="black"/></svg>\') 5 2, n-resize';
+
+    const getRowHeight = useCallback((row) => {
+        if (isMobile) return row.mobileHeight ?? row.height;
+        return row.desktopHeight ?? row.height;
+    }, [isMobile]);
 
     const clampMediaIndex = useCallback((rowIndex, mediaIndex) => {
         const row = rows[rowIndex];
@@ -231,7 +241,27 @@ export default function Home() {
             observer.observe(el);
         });
 
+        if (footerRef.current) {
+            footerRef.current.dataset.rowId = String(FOOTER_ROW_ID);
+            observer.observe(footerRef.current);
+        }
+
         return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        const updateNearBottom = () => {
+            const remainingScroll = container.scrollHeight - container.scrollTop - container.clientHeight;
+            setIsNearBottom(remainingScroll <= Math.max(container.clientHeight * 0.5, 240));
+        };
+
+        updateNearBottom();
+        container.addEventListener('scroll', updateNearBottom, { passive: true });
+
+        return () => container.removeEventListener('scroll', updateNearBottom);
     }, []);
 
     const selectedRow = selected ? rows[selected.rowIndex] : null;
@@ -260,6 +290,10 @@ export default function Home() {
         }));
     });
 
+    const overlayRows = isMobile
+        ? [...rows, { id: FOOTER_ROW_ID, label: '[] - contact', urls: ['footer-marker'], height: 1, mobileHeight: 1 }]
+        : rows;
+
     const selectedMobilePageIndex = selected
         ? mobilePages.findIndex((item) =>
             item.rowIndex === selected.rowIndex && (item.cycler || item.mediaIndex === selected.mediaIndex)
@@ -275,6 +309,18 @@ export default function Home() {
     const handleReturnToTop = () => {
         setSelected({ rowIndex: 0, mediaIndex: 0 });
     };
+
+    const handleScrollToTop = useCallback(() => {
+        setPageFlashKey((current) => current + 1);
+
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        container.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    }, []);
 
     const handleMobilePagerScroll = (e) => {
         if (!selected || !isMobile) return;
@@ -306,9 +352,16 @@ export default function Home() {
 
     const renderRow = (row) => {
         const shouldLoadVideos = row.id <= maxUnlockedRowId;
+        const rowHeight = getRowHeight(row);
 
         if (row.custom === 'jxu-archive') {
-            return <JxuArchiveRow shouldLoadVideos={shouldLoadVideos} onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })} />;
+            return (
+                <JxuArchiveRow
+                    height={rowHeight}
+                    shouldLoadVideos={shouldLoadVideos}
+                    onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
+                />
+            );
         }
 
         if (row.cycler) {
@@ -316,7 +369,7 @@ export default function Home() {
                 <ImageCycler
                     images={row.urls}
                     interval={1000}
-                    height={row.height}
+                    height={rowHeight}
                     onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
                 />
             );
@@ -325,7 +378,7 @@ export default function Home() {
         return (
             <ImageRow
                 urls={row.urls}
-                height={row.height}
+                height={rowHeight}
                 margins={row.margins}
                 shouldLoadVideos={shouldLoadVideos}
                 onSelect={(mediaIndex) => setSelected({ rowIndex: row.id, mediaIndex })}
@@ -334,6 +387,20 @@ export default function Home() {
     };
 
     const handleOverlaySelect = (rowId, mediaIndex) => {
+        if (rowId === FOOTER_ROW_ID) {
+            if (selected) return;
+
+            const container = scrollContainerRef.current;
+            const el = footerRef.current;
+            if (!container || !el) return;
+
+            container.scrollTo({
+                top: el.offsetTop,
+                behavior: 'smooth',
+            });
+            return;
+        }
+
         if (selected) {
             setSelected({
                 rowIndex: rowId,
@@ -352,8 +419,45 @@ export default function Home() {
         });
     };
 
+    const handleOverlayScrub = (rowId, mediaIndex) => {
+        if (rowId === FOOTER_ROW_ID) {
+            if (selected) return;
+
+            const container = scrollContainerRef.current;
+            const el = footerRef.current;
+            if (!container || !el) return;
+
+            container.scrollTo({
+                top: el.offsetTop,
+                behavior: 'auto',
+            });
+            return;
+        }
+
+        if (selected) {
+            setSelected({
+                rowIndex: rowId,
+                mediaIndex: rows[rowId].cycler ? 0 : mediaIndex,
+            });
+            return;
+        }
+
+        const container = scrollContainerRef.current;
+        const el = rowRefs.current[rowId];
+        if (!container || !el) return;
+
+        container.scrollTo({
+            top: el.offsetTop,
+            behavior: 'auto',
+        });
+    };
+
     return (
         <div ref={scrollContainerRef} className="flex h-screen w-screen snap-y snap-mandatory flex-col overflow-y-auto px-2 font-mono text-[8.5pt] scrollbar-hide lg:snap-none">
+            <div
+                key={`page-flash-${pageFlashKey}`}
+                className={`${pageFlashKey > 0 ? 'page-flash-grey ' : ''}pointer-events-none fixed inset-0 z-[40]`}
+            />
             <video
                 src="https://firebasestorage.googleapis.com/v0/b/common-base-d538e.firebasestorage.app/o/common-design-spinner.MOV?alt=media&token=b62f41cc-fb22-4ecd-a0bb-c04b24f9e66a"
                 autoPlay
@@ -373,20 +477,21 @@ export default function Home() {
             </div>
 
             <SiteMapOverlay
-                rows={rows}
+                rows={overlayRows}
                 visibleRowIds={visibleRowIds}
                 onDotClick={handleOverlaySelect}
+                onDotScrub={handleOverlayScrub}
                 selected={selected}
                 desktopPosition="underRightHeader"
             />
 
             <div className="lg:space-y-12 lg:pt-2">
-                {showcases.map((showcase) => (
+                {showcases.map((showcase, index) => (
                     <ProjectShowcase
                         key={showcase.id}
                         title={showcase.title}
                         titleClassName={showcase.titleClassName}
-                        className="lg:mb-12"
+                        className={index === showcases.length - 1 ? 'lg:mb-3' : 'lg:mb-12'}
                     >
                         {showcase.rows.map((row) => (
                             <div
@@ -400,12 +505,69 @@ export default function Home() {
                         ))}
                     </ProjectShowcase>
                 ))}
+
+                <section ref={footerRef} className="snap-start flex min-h-[100svh] flex-col items-center justify-center px-4 pt-[96px] pb-10 text-center lg:min-h-0 lg:justify-end lg:px-0 lg:pt-0 lg:pb-24 lg:text-left lg:snap-none">
+                    <div className="flex w-full max-w-[520px] flex-col items-center gap-6 lg:hidden">
+                        <div className="space-y-2">
+                            <p>interested in working together?</p>
+                            <a
+                                href="mailto:dancr.wley@gmail.com"
+                                className="inline-block underline underline-offset-2"
+                            >
+                                dancr.wley@gmail.com
+                            </a>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-[8.5pt] uppercase tracking-[0.08em] transition-opacity duration-75 hover:opacity-0"
+                            style={{ cursor: triangleCursor }}
+                            onClick={handleScrollToTop}
+                        >
+                            return to top
+                        </button>
+                    </div>
+
+                    <div
+                        className={`pointer-events-none fixed inset-x-0 top-1/2 hidden -translate-y-1/2 lg:block transition-all duration-500 ease-out ${
+                            isNearBottom ? 'translate-y-[-50%] opacity-100' : 'translate-y-[calc(-50%+56px)] opacity-0'
+                        }`}
+                    >
+                        <div className="relative mx-auto flex w-full items-center justify-center px-6 text-[8.5pt]">
+                            <button
+                                type="button"
+                                className="pointer-events-auto inline-flex items-center gap-1 uppercase tracking-[0.08em] transition-opacity duration-75 hover:opacity-0"
+                                style={{ cursor: triangleCursor }}
+                                onClick={handleScrollToTop}
+                            >
+                                return to top
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        className={`pointer-events-none fixed right-3 bottom-2 hidden lg:block text-[8.5pt] transition-all duration-500 ease-out ${
+                            isNearBottom ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                        }`}
+                    >
+                        <div className="pointer-events-auto flex flex-row items-baseline justify-end gap-x-2 text-right">
+                            <p className="italic">wanna talk?</p>
+                            <>e:</>
+                            <a
+                                href="mailto:dancr.wley@gmail.com"
+                                className="inline-block underline underline-offset-2"
+                            >
+                                dancr.wley@gmail.com
+                            </a>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             {selected && selectedEntry && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
+                    style={{backgroundColor: 'rgba(255, 255, 255, 0.9)'}}
                     onClick={clearSelection}
                 >
                     {isMobile ? (

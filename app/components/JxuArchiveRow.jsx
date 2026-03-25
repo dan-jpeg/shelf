@@ -5,8 +5,8 @@
 
     // Custom row for [] - jxu archive scroll
     // Edit layout, sizing, spacing, etc. freely here
-    export default function JxuArchiveRow({ onSelect, shouldLoadVideos = true }) {
-        const height = '310px';
+    export default function JxuArchiveRow({ onSelect, shouldLoadVideos = true, height = 310 }) {
+        const resolvedHeight = typeof height === 'number' ? `${height}px` : height;
 
         return (
             <div className="flex flex-row scrollbar-hide  items-start gap-2 overflow-x-auto lg:flex-wrap">
@@ -14,7 +14,7 @@
                     <VideoPlayer
                         key={index}
                         entry={entry}
-                        style={{ height, minWidth: 'auto' }}
+                        style={{ height: resolvedHeight, minWidth: 'auto' }}
                         autoPlay
                         loop
                         muted

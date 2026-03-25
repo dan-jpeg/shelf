@@ -117,3 +117,21 @@ body {
     transform: translate3d(0, 0, 0);
   }
 }
+
+.page-flash-grey {
+  animation: page-flash-grey 1000ms ease-out;
+}
+
+@keyframes page-flash-grey {
+  0%, 100% {
+    background-color: transparent;
+  }
+
+  10%, 28%, 46% {
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+
+  19%, 37%, 55% {
+    background-color: transparent;
+  }
+}
